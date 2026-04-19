@@ -8,114 +8,176 @@ export default function NeonPortfolio() {
   const [showSplash, setShowSplash] = useState(true)
   const [isTerminalMode, setIsTerminalMode] = useState(false)
   const [selectedMedia, setSelectedMedia] = useState(null)
+  const [expandedFAQ, setExpandedFAQ] = useState(null)
+  const [showChat, setShowChat] = useState(false)
+  const [chatMessages, setChatMessages] = useState([
+    { id: 1, sender: 'bot', text: 'Bonjour! 👋 Comment puis-je t\'aider ?' }
+  ])
+  const [chatInput, setChatInput] = useState('')
+  const [bookingDate, setBookingDate] = useState('')
+  const [selectedPlan, setSelectedPlan] = useState(null)
 
   useEffect(() => {
     const timer = setTimeout(() => setShowSplash(false), 3000)
     return () => clearTimeout(timer)
   }, [])
 
-  // GALERIE BOUTIQUES - Ajoute tes vidéos et photos ici
+  // DONNÉES
   const galleryItems = [
     {
       id: 1,
       title: 'Boutique Paris - Ambiance',
-      type: 'image', // 'image' ou 'video'
+      type: 'image',
       url: 'https://via.placeholder.com/600x400?text=Boutique+Paris',
       thumbnail: 'https://via.placeholder.com/200x150?text=Paris',
     },
     {
       id: 2,
-      title: 'Boutique Paris - Visite 360',
-      type: 'video',
-      url: 'https://www.youtube.com/embed/dQw4w9WgXcQ', // Remplace par ta vidéo YouTube
-      thumbnail: 'https://via.placeholder.com/200x150?text=Video+Paris',
-    },
-    {
-      id: 3,
-      title: 'Boutique Lyon - Facade',
+      title: 'Boutique Lyon',
       type: 'image',
       url: 'https://via.placeholder.com/600x400?text=Boutique+Lyon',
       thumbnail: 'https://via.placeholder.com/200x150?text=Lyon',
     },
     {
-      id: 4,
-      title: 'Boutique Lyon - Intérieur',
-      type: 'video',
-      url: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-      thumbnail: 'https://via.placeholder.com/200x150?text=Video+Lyon',
-    },
-    {
-      id: 5,
-      title: 'Boutique Marseille - Vue générale',
+      id: 3,
+      title: 'Boutique Marseille',
       type: 'image',
       url: 'https://via.placeholder.com/600x400?text=Boutique+Marseille',
       thumbnail: 'https://via.placeholder.com/200x150?text=Marseille',
     },
-    {
-      id: 6,
-      title: 'Boutique Marseille - Détails',
-      type: 'image',
-      url: 'https://via.placeholder.com/600x400?text=Details+Marseille',
-      thumbnail: 'https://via.placeholder.com/200x150?text=Details',
-    },
   ]
 
-  const projects = [
+  const testimonials = [
     {
       id: 1,
-      title: 'Dashboard Analytics',
-      description: 'Tableau de bord temps réel',
-      stack: ['Next.js', 'React', 'Chart.js'],
-      image: '📊',
+      name: 'Marie Dupont',
+      role: 'CEO TechStart',
+      text: 'Travail impeccable ! JuDev a transformé ma présence web. Très professionnel et réactif.',
+      rating: 5,
+      avatar: '👩‍💼',
     },
     {
       id: 2,
-      title: 'E-Commerce Platform',
-      description: 'Plateforme complète',
-      stack: ['React', 'Node.js', 'MongoDB'],
-      image: '🛍️',
+      name: 'Jean Martin',
+      role: 'Directeur Boutique',
+      text: 'Excellente qualité de travail. L\'équipe est à l\'écoute et livre à temps.',
+      rating: 5,
+      avatar: '👨‍💼',
     },
     {
       id: 3,
-      title: '3D Viewer',
-      description: 'Visualiseur 3D',
-      stack: ['Three.js', 'React', 'WebGL'],
-      image: '🎨',
+      name: 'Sophie Laurent',
+      role: 'Responsable E-Commerce',
+      text: 'Super créatif ! Mon site est devenu mon meilleur outil de vente. Merci JuDev !',
+      rating: 5,
+      avatar: '👩‍🔬',
     },
     {
       id: 4,
-      title: 'SaaS App',
-      description: 'Application SaaS',
-      stack: ['Next.js', 'OpenAI', 'Stripe'],
-      image: '✨',
+      name: 'Pierre Durand',
+      role: 'Startup Founder',
+      text: 'Très compétent et professionnel. Je recommande vivement !',
+      rating: 5,
+      avatar: '👨‍🎨',
+    },
+  ]
+
+  const pricingPlans = [
+    {
+      id: 1,
+      name: 'Starter',
+      price: '499€',
+      period: '/mois',
+      description: 'Parfait pour débuter',
+      features: [
+        '5 pages max',
+        'Design responsive',
+        'SEO basique',
+        'Support email',
+        'SSL gratuit',
+      ],
+      cta: 'Démarrer',
+      highlight: false,
+    },
+    {
+      id: 2,
+      name: 'Pro',
+      price: '999€',
+      period: '/mois',
+      description: 'Pour croître',
+      features: [
+        'Pages illimitées',
+        'Design custom',
+        'SEO avancé',
+        'Support 24/7',
+        'Analytics',
+        'Intégrations',
+      ],
+      cta: 'Choisir',
+      highlight: true,
+    },
+    {
+      id: 3,
+      name: 'Enterprise',
+      price: 'Sur devis',
+      period: '',
+      description: 'Pour grandes structures',
+      features: [
+        'Tout illimité',
+        'Support dédié',
+        'API custom',
+        'Infrastructure privée',
+        'SLA garanti',
+      ],
+      cta: 'Contacter',
+      highlight: false,
+    },
+  ]
+
+  const faqs = [
+    {
+      id: 1,
+      question: 'Combien de temps pour créer un site ?',
+      answer: 'En général 2-4 semaines selon la complexité. Les projets simples peuvent être plus rapides.',
+    },
+    {
+      id: 2,
+      question: 'Offrez-vous le support après livraison ?',
+      answer: 'Oui ! Support inclus selon votre plan. Maintenance et mises à jour disponibles.',
+    },
+    {
+      id: 3,
+      question: 'Mon site sera-t-il responsive ?',
+      answer: 'Oui, 100% responsive ! Testés sur tous les appareils (mobile, tablette, PC).',
+    },
+    {
+      id: 4,
+      question: 'Pouvez-vous migrer mon ancien site ?',
+      answer: 'Absolument ! Migration gratuite + redirection des URLs pour le SEO.',
     },
     {
       id: 5,
-      title: 'Design Tool',
-      description: 'Outil collaboratif',
-      stack: ['React', 'Socket.io', 'Canvas'],
-      image: '🎭',
+      question: 'Quelle est votre délai de réponse ?',
+      answer: 'Réponse garantie en 24h. Chat en direct pour urgences.',
     },
     {
       id: 6,
-      title: 'Mobile App',
-      description: 'App native',
-      stack: ['React Native', 'Firebase', 'Expo'],
-      image: '📱',
+      question: 'Acceptez-vous les paiements échelonnés ?',
+      answer: 'Oui ! 2-3 versements possibles selon le devis. Flexible sur les conditions.',
     },
   ]
 
   const services = [
     { icon: '🌐', title: 'Site Vitrine', description: 'Web moderne' },
     { icon: '⚙️', title: 'App Web', description: 'Scalable' },
-    { icon: '📱', title: 'PWA', description: 'Offline-first' },
-    { icon: '🎨', title: 'UI/UX Design', description: 'Innovant' },
-    { icon: '🚀', title: 'Landing Page', description: 'Conversion' },
-    { icon: '🔧', title: 'Maintenance', description: 'Support' },
+    { icon: '📱', title: 'PWA', description: 'Offline' },
+    { icon: '🎨', title: 'UI/UX', description: 'Design' },
+    { icon: '🚀', title: 'Landing', description: 'Conversion' },
+    { icon: '🔧', title: 'Support', description: '24/7' },
   ]
 
   const skills = [
-    { category: 'Frontend', items: ['React', 'Next.js', 'Three.js', 'Tailwind', 'GSAP'] },
+    { category: 'Frontend', items: ['React', 'Next.js', 'Three.js', 'Tailwind'] },
     { category: 'Backend', items: ['Node.js', 'Express', 'PostgreSQL', 'MongoDB'] },
     { category: 'Tools', items: ['Git', 'Docker', 'Figma', 'Vercel'] },
   ]
@@ -123,11 +185,36 @@ export default function NeonPortfolio() {
   const navItems = [
     { id: 'home', label: 'Accueil' },
     { id: 'judev', label: 'JuDev' },
-    { id: 'services', label: 'Services' },
-    { id: 'skills', label: 'Skills' },
-    { id: 'about', label: 'À propos' },
+    { id: 'avis', label: 'Avis' },
+    { id: 'tarifs', label: 'Tarifs' },
+    { id: 'faq', label: 'FAQ' },
+    { id: 'booking', label: 'Réserver' },
     { id: 'contact', label: 'Contact' },
   ]
+
+  // Fonctions Chat
+  const handleChatSend = () => {
+    if (!chatInput.trim()) return
+    
+    const newMessage = {
+      id: chatMessages.length + 1,
+      sender: 'user',
+      text: chatInput,
+    }
+    
+    setChatMessages([...chatMessages, newMessage])
+    setChatInput('')
+    
+    // Réponse auto du bot après 500ms
+    setTimeout(() => {
+      const botReply = {
+        id: chatMessages.length + 2,
+        sender: 'bot',
+        text: 'Merci pour ta question ! 👍 Je passe ta demande à notre équipe. Tu recevras une réponse rapidement.',
+      }
+      setChatMessages(prev => [...prev, botReply])
+    }, 500)
+  }
 
   // SPLASHSCREEN
   if (showSplash) {
@@ -169,11 +256,6 @@ export default function NeonPortfolio() {
             transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
             className="absolute -top-1/2 -left-1/2 w-96 h-96 border border-pink-400/10 rounded-full"
           />
-          <motion.div
-            animate={{ rotate: -360 }}
-            transition={{ duration: 25, repeat: Infinity, ease: 'linear' }}
-            className="absolute -bottom-1/2 -right-1/2 w-96 h-96 border border-blue-400/10 rounded-full"
-          />
         </div>
       </div>
     )
@@ -181,23 +263,19 @@ export default function NeonPortfolio() {
 
   // NAVIGATION
   const Navigation = () => (
-    <nav className="fixed top-0 left-0 right-0 z-40 bg-black/80 backdrop-blur-md border-b border-pink-500/20">
-      <div className="max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between">
-        <motion.h1
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="text-xl md:text-2xl font-black bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent"
-        >
+    <nav className="fixed top-0 left-0 right-0 z-40 bg-black/80 backdrop-blur-md border-b border-pink-500/20 overflow-x-auto">
+      <div className="max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between whitespace-nowrap">
+        <h1 className="text-xl md:text-2xl font-black bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent flex-shrink-0">
           JuDev
-        </motion.h1>
+        </h1>
 
-        <div className="flex items-center gap-2 md:gap-8">
-          <div className="hidden md:flex gap-1">
+        <div className="flex items-center gap-1 md:gap-8 flex-shrink-0">
+          <div className="hidden lg:flex gap-1">
             {navItems.map((item) => (
               <button
                 key={item.id}
                 onClick={() => setCurrentPage(item.id)}
-                className={`px-4 py-2 text-sm font-semibold rounded-lg transition-all ${
+                className={`px-3 md:px-4 py-2 text-xs md:text-sm font-semibold rounded-lg transition-all ${
                   currentPage === item.id
                     ? 'bg-gradient-to-r from-pink-500/30 to-purple-500/30 text-pink-300 border border-pink-500/50'
                     : 'text-gray-400 hover:text-pink-300'
@@ -208,12 +286,12 @@ export default function NeonPortfolio() {
             ))}
           </div>
 
-          <div className="md:hidden flex gap-1">
-            {navItems.slice(0, 3).map((item) => (
+          <div className="lg:hidden flex gap-1 overflow-x-auto">
+            {navItems.slice(0, 4).map((item) => (
               <button
                 key={item.id}
                 onClick={() => setCurrentPage(item.id)}
-                className={`px-2 py-1 text-xs font-semibold rounded transition-all ${
+                className={`px-2 py-1 text-xs font-semibold rounded transition-all flex-shrink-0 ${
                   currentPage === item.id ? 'bg-pink-500/30 text-pink-300' : 'text-gray-400'
                 }`}
               >
@@ -224,7 +302,7 @@ export default function NeonPortfolio() {
 
           <button
             onClick={() => setIsTerminalMode(!isTerminalMode)}
-            className="px-3 md:px-4 py-2 text-xs md:text-sm border border-pink-500/50 text-pink-400 rounded-lg hover:bg-pink-500/10 transition font-mono"
+            className="px-3 md:px-4 py-2 text-xs md:text-sm border border-pink-500/50 text-pink-400 rounded-lg hover:bg-pink-500/10 transition font-mono flex-shrink-0"
           >
             $ {isTerminalMode ? 'EXIT' : 'TERM'}
           </button>
@@ -270,29 +348,18 @@ export default function NeonPortfolio() {
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
-              onClick={() => setCurrentPage('contact')}
+              onClick={() => setCurrentPage('booking')}
               className="px-6 md:px-8 py-3 md:py-4 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 border border-blue-400 text-blue-300 rounded-lg hover:from-blue-500/30 hover:to-cyan-500/30 transition font-semibold text-base md:text-lg w-full md:w-auto"
             >
-              → Contact
+              → Réserver
             </motion.button>
           </div>
-        </motion.div>
-
-        <motion.div
-          className="absolute inset-0 flex items-center justify-center pointer-events-none"
-          style={{ zIndex: -1 }}
-        >
-          <motion.div
-            animate={{ rotateX: [0, 360], rotateY: [0, 360] }}
-            transition={{ duration: 20, repeat: Infinity, ease: 'linear' }}
-            className="w-40 md:w-72 h-40 md:h-72 border-2 border-pink-400/15 rounded-2xl"
-          />
         </motion.div>
       </div>
     </motion.div>
   )
 
-  // PAGE: JUDEV (Galerie + Projets)
+  // PAGE: JUDEV
   const JuDevPage = () => (
     <motion.div
       initial={{ opacity: 0 }}
@@ -300,176 +367,60 @@ export default function NeonPortfolio() {
       className="min-h-screen pt-20 md:pt-32 pb-16 md:pb-20 bg-black"
     >
       <div className="max-w-7xl mx-auto px-4 md:px-6">
-        {/* Galerie Section */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="mb-20"
-        >
-          <h2 className="text-5xl md:text-7xl font-black mb-4">
-            <span className="block text-white">GALERIE</span>
-            <span className="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">BOUTIQUES</span>
-          </h2>
-          <p className="text-gray-400 text-lg md:text-xl mb-12">Photos et vidéos de nos boutiques</p>
+        <h2 className="text-5xl md:text-7xl font-black mb-12">
+          <span className="block text-white">GALERIE</span>
+          <span className="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">BOUTIQUES</span>
+        </h2>
 
-          {/* Modal Fullscreen */}
-          {selectedMedia && (
+        {selectedMedia && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            onClick={() => setSelectedMedia(null)}
+            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+          >
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              onClick={() => setSelectedMedia(null)}
-              className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+              initial={{ scale: 0.8 }}
+              animate={{ scale: 1 }}
+              className="relative max-w-4xl w-full"
+              onClick={(e) => e.stopPropagation()}
             >
-              <motion.div
-                initial={{ scale: 0.8 }}
-                animate={{ scale: 1 }}
-                className="relative max-w-4xl w-full"
-                onClick={(e) => e.stopPropagation()}
+              <button
+                onClick={() => setSelectedMedia(null)}
+                className="absolute -top-10 right-0 text-pink-400 text-3xl z-10"
               >
-                <button
-                  onClick={() => setSelectedMedia(null)}
-                  className="absolute -top-10 right-0 text-pink-400 text-3xl z-10"
-                >
-                  ✕
-                </button>
-
-                {selectedMedia.type === 'video' ? (
-                  <iframe
-                    width="100%"
-                    height="600"
-                    src={selectedMedia.url}
-                    title={selectedMedia.title}
-                    frameBorder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                    allowFullScreen
-                    className="rounded-xl"
-                  />
-                ) : (
-                  <img
-                    src={selectedMedia.url}
-                    alt={selectedMedia.title}
-                    className="w-full h-auto rounded-xl"
-                  />
-                )}
-
-                <p className="text-center text-gray-300 mt-6 text-lg">{selectedMedia.title}</p>
-              </motion.div>
+                ✕
+              </button>
+              <img
+                src={selectedMedia.url}
+                alt={selectedMedia.title}
+                className="w-full h-auto rounded-xl"
+              />
+              <p className="text-center text-gray-300 mt-6 text-lg">{selectedMedia.title}</p>
             </motion.div>
-          )}
-
-          {/* Galerie Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-20">
-            {galleryItems.map((item, i) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                onClick={() => setSelectedMedia(item)}
-                className="group relative cursor-pointer"
-              >
-                <div className="relative bg-black/60 backdrop-blur-md border border-pink-500/20 rounded-xl overflow-hidden hover:border-pink-500/50 transition-all h-64 md:h-72">
-                  <img
-                    src={item.thumbnail}
-                    alt={item.title}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
-                  />
-
-                  {/* Overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-end justify-end p-4">
-                    <p className="text-pink-300 text-sm md:text-base font-semibold text-right">{item.title}</p>
-                    <p className="text-xs text-gray-400 mt-1">
-                      {item.type === 'video' ? '🎥 Vidéo' : '📸 Photo'}
-                    </p>
-                  </div>
-
-                  {/* Play Icon for Videos */}
-                  {item.type === 'video' && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/50 group-hover:bg-black/30 transition-all">
-                      <div className="w-16 h-16 bg-pink-500/30 border-2 border-pink-400 rounded-full flex items-center justify-center group-hover:bg-pink-500/50 transition-all">
-                        <span className="text-white text-2xl ml-1">▶</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* Projets Section */}
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="mb-12"
-        >
-          <h3 className="text-4xl md:text-5xl font-black mb-8">
-            <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">PROJETS</span>
-          </h3>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-            {projects.slice(0, 3).map((project, i) => (
-              <motion.div
-                key={project.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                className="group relative"
-              >
-                <div className="relative bg-black/60 backdrop-blur-md border border-blue-500/20 rounded-xl p-6 hover:border-blue-500/50 transition-all h-full flex flex-col bg-gradient-to-br from-blue-950/10 to-cyan-950/10">
-                  <div className="text-5xl mb-4">{project.image}</div>
-                  <h4 className="text-lg md:text-xl font-bold text-white mb-2">{project.title}</h4>
-                  <p className="text-gray-400 text-sm md:text-base mb-4 flex-grow">{project.description}</p>
-                  <div className="flex flex-wrap gap-2">
-                    {project.stack.map((tech, i) => (
-                      <span
-                        key={i}
-                        className="px-2 py-1 text-xs bg-blue-500/20 border border-blue-500/30 text-blue-300 rounded-full font-mono"
-                      >
-                        {tech}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </motion.div>
-      </div>
-    </motion.div>
-  )
-
-  // PAGE: SERVICES
-  const ServicesPage = () => (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      className="min-h-screen pt-20 md:pt-32 pb-16 md:pb-20 bg-black"
-    >
-      <div className="max-w-7xl mx-auto px-4 md:px-6">
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="mb-12 md:mb-20"
-        >
-          <h2 className="text-5xl md:text-7xl font-black mb-4">
-            <span className="block text-white">MES</span>
-            <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">SERVICES</span>
-          </h2>
-        </motion.div>
+          </motion.div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
-          {services.map((service, i) => (
+          {galleryItems.map((item, i) => (
             <motion.div
-              key={i}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
+              key={item.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
-              className="bg-gradient-to-br from-blue-950/20 to-cyan-950/20 border border-blue-500/20 rounded-xl p-6 md:p-8 hover:border-blue-500/50 transition-all group"
+              onClick={() => setSelectedMedia(item)}
+              className="group relative cursor-pointer"
             >
-              <div className="text-4xl md:text-5xl mb-4 group-hover:scale-110 transition-transform">{service.icon}</div>
-              <h3 className="text-lg md:text-xl font-bold text-white mb-3">{service.title}</h3>
-              <p className="text-gray-400 text-sm md:text-base">{service.description}</p>
+              <div className="relative bg-black/60 border border-pink-500/20 rounded-xl overflow-hidden hover:border-pink-500/50 transition-all h-64">
+                <img
+                  src={item.thumbnail}
+                  alt={item.title}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex items-end p-4">
+                  <p className="text-pink-300 font-semibold">{item.title}</p>
+                </div>
+              </div>
             </motion.div>
           ))}
         </div>
@@ -477,45 +428,44 @@ export default function NeonPortfolio() {
     </motion.div>
   )
 
-  // PAGE: SKILLS
-  const SkillsPage = () => (
+  // PAGE: AVIS
+  const AvisPage = () => (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="min-h-screen pt-20 md:pt-32 pb-16 md:pb-20 bg-black"
     >
       <div className="max-w-7xl mx-auto px-4 md:px-6">
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          className="mb-12 md:mb-20"
-        >
-          <h2 className="text-5xl md:text-7xl font-black mb-4">
-            <span className="block text-white">MES</span>
-            <span className="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">COMPÉTENCES</span>
-          </h2>
-        </motion.div>
+        <h2 className="text-5xl md:text-7xl font-black mb-4">
+          <span className="block text-white">AVIS</span>
+          <span className="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">CLIENTS</span>
+        </h2>
+        <p className="text-gray-400 text-lg md:text-xl mb-12">Nos clients satisfaits partagent leur expérience</p>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
-          {skills.map((skill, i) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
+          {testimonials.map((testimonial, i) => (
             <motion.div
-              key={i}
+              key={testimonial.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
               className="bg-gradient-to-br from-pink-950/20 to-purple-950/20 border border-pink-500/20 rounded-xl p-6 md:p-8"
             >
-              <h3 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent mb-6">
-                {skill.category}
-              </h3>
-              <ul className="space-y-3">
-                {skill.items.map((item, j) => (
-                  <li key={j} className="text-gray-300 text-sm md:text-base flex items-center gap-3">
-                    <span className="w-2 h-2 bg-gradient-to-r from-pink-400 to-purple-400 rounded-full" />
-                    {item}
-                  </li>
+              <div className="flex items-start gap-4 mb-4">
+                <div className="text-4xl">{testimonial.avatar}</div>
+                <div className="flex-1">
+                  <h3 className="text-lg font-bold text-white">{testimonial.name}</h3>
+                  <p className="text-sm text-gray-400">{testimonial.role}</p>
+                </div>
+              </div>
+
+              <div className="flex gap-1 mb-4">
+                {[...Array(testimonial.rating)].map((_, i) => (
+                  <span key={i} className="text-yellow-400">⭐</span>
                 ))}
-              </ul>
+              </div>
+
+              <p className="text-gray-300 italic">"{testimonial.text}"</p>
             </motion.div>
           ))}
         </div>
@@ -523,36 +473,201 @@ export default function NeonPortfolio() {
     </motion.div>
   )
 
-  // PAGE: ABOUT
-  const AboutPage = () => (
+  // PAGE: TARIFS
+  const TarifsPage = () => (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="min-h-screen pt-20 md:pt-32 pb-16 md:pb-20 bg-black"
+    >
+      <div className="max-w-7xl mx-auto px-4 md:px-6">
+        <h2 className="text-5xl md:text-7xl font-black mb-4">
+          <span className="block text-white">NOS</span>
+          <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">TARIFS</span>
+        </h2>
+        <p className="text-gray-400 text-lg md:text-xl mb-16">Choisis le plan qui correspond à tes besoins</p>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          {pricingPlans.map((plan, i) => (
+            <motion.div
+              key={plan.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.1 }}
+              className={`relative rounded-xl p-6 md:p-8 border transition-all ${
+                plan.highlight
+                  ? 'bg-gradient-to-br from-blue-950/40 to-cyan-950/40 border-blue-500/50 md:scale-105'
+                  : 'bg-gradient-to-br from-blue-950/10 to-cyan-950/10 border-blue-500/20 hover:border-blue-500/50'
+              }`}
+            >
+              {plan.highlight && (
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-gradient-to-r from-blue-500 to-cyan-500 px-4 py-1 rounded-full text-sm font-semibold text-white">
+                  RECOMMANDÉ
+                </div>
+              )}
+
+              <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">{plan.name}</h3>
+              <p className="text-gray-400 text-sm md:text-base mb-6">{plan.description}</p>
+
+              <div className="mb-8">
+                <span className="text-4xl md:text-5xl font-black text-blue-400">{plan.price}</span>
+                <span className="text-gray-400">{plan.period}</span>
+              </div>
+
+              <ul className="space-y-4 mb-8">
+                {plan.features.map((feature, i) => (
+                  <li key={i} className="text-gray-300 flex items-center gap-3">
+                    <span className="w-2 h-2 bg-blue-400 rounded-full" />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => {
+                  setSelectedPlan(plan.name)
+                  setCurrentPage('contact')
+                }}
+                className={`w-full py-3 rounded-lg font-semibold transition ${
+                  plan.highlight
+                    ? 'bg-gradient-to-r from-blue-500 to-cyan-500 text-white hover:from-blue-600 hover:to-cyan-600'
+                    : 'bg-blue-500/20 border border-blue-500 text-blue-300 hover:bg-blue-500/30'
+                }`}
+              >
+                {plan.cta}
+              </motion.button>
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  )
+
+  // PAGE: FAQ
+  const FAQPage = () => (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       className="min-h-screen pt-20 md:pt-32 pb-16 md:pb-20 bg-black"
     >
       <div className="max-w-4xl mx-auto px-4 md:px-6">
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-        >
-          <h2 className="text-5xl md:text-7xl font-black mb-8 md:mb-12">
-            <span className="block text-white">À</span>
-            <span className="bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 bg-clip-text text-transparent">PROPOS</span>
-          </h2>
+        <h2 className="text-5xl md:text-7xl font-black mb-4">
+          <span className="block text-white">QUESTIONS</span>
+          <span className="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">FRÉQUENTES</span>
+        </h2>
+        <p className="text-gray-400 text-lg md:text-xl mb-12">Trouve les réponses à tes questions</p>
 
-          <div className="space-y-6 md:space-y-8 text-gray-300 text-base md:text-lg leading-relaxed">
-            <p>
-              Je suis un développeur web créatif passionné par la création d'expériences numériques immersives.
-              Avec 5+ ans d'expérience, je combine <span className="text-pink-400 font-semibold">technologie cutting-edge</span> et
-              <span className="text-purple-400 font-semibold"> design innovant</span>.
-            </p>
+        <div className="space-y-4">
+          {faqs.map((faq) => (
+            <motion.div
+              key={faq.id}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="bg-gradient-to-br from-pink-950/20 to-purple-950/20 border border-pink-500/20 rounded-xl overflow-hidden hover:border-pink-500/50 transition-all"
+            >
+              <button
+                onClick={() => setExpandedFAQ(expandedFAQ === faq.id ? null : faq.id)}
+                className="w-full px-6 md:px-8 py-4 md:py-6 text-left flex items-center justify-between hover:bg-pink-500/10 transition"
+              >
+                <h3 className="text-base md:text-lg font-bold text-white">{faq.question}</h3>
+                <span className={`text-pink-400 text-2xl transition-transform ${
+                  expandedFAQ === faq.id ? 'rotate-180' : ''
+                }`}>
+                  ▼
+                </span>
+              </button>
 
-            <p>
-              Ma spécialité : créer des interfaces web qui fascinent et engagent. De la conception au déploiement,
-              je gère tous les aspects du projet avec passion et rigueur.
-            </p>
-          </div>
-        </motion.div>
+              {expandedFAQ === faq.id && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  className="px-6 md:px-8 py-4 md:py-6 border-t border-pink-500/20 text-gray-300"
+                >
+                  {faq.answer}
+                </motion.div>
+              )}
+            </motion.div>
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  )
+
+  // PAGE: BOOKING
+  const BookingPage = () => (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      className="min-h-screen pt-20 md:pt-32 pb-16 md:pb-20 bg-black"
+    >
+      <div className="max-w-4xl mx-auto px-4 md:px-6">
+        <h2 className="text-5xl md:text-7xl font-black mb-4">
+          <span className="block text-white">RÉSERVE</span>
+          <span className="bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">MAINTENANT</span>
+        </h2>
+        <p className="text-gray-400 text-lg md:text-xl mb-12">Prends un rendez-vous avec notre équipe</p>
+
+        <div className="bg-gradient-to-br from-blue-950/20 to-cyan-950/20 border border-blue-500/20 rounded-xl p-6 md:p-12">
+          <form className="space-y-6">
+            <div>
+              <label className="block text-white font-semibold mb-2">Nom complet</label>
+              <input
+                type="text"
+                placeholder="Ton nom"
+                className="w-full bg-black/50 border border-blue-500/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition"
+              />
+            </div>
+
+            <div>
+              <label className="block text-white font-semibold mb-2">Email</label>
+              <input
+                type="email"
+                placeholder="tonemail@example.com"
+                className="w-full bg-black/50 border border-blue-500/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition"
+              />
+            </div>
+
+            <div>
+              <label className="block text-white font-semibold mb-2">Date souhaitée</label>
+              <input
+                type="date"
+                value={bookingDate}
+                onChange={(e) => setBookingDate(e.target.value)}
+                className="w-full bg-black/50 border border-blue-500/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition"
+              />
+            </div>
+
+            <div>
+              <label className="block text-white font-semibold mb-2">Type de rendez-vous</label>
+              <select className="w-full bg-black/50 border border-blue-500/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition">
+                <option>Consultation gratuite</option>
+                <option>Devis détaillé</option>
+                <option>Suivi de projet</option>
+                <option>Support technique</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-white font-semibold mb-2">Message (optionnel)</label>
+              <textarea
+                placeholder="Dis-nous plus sur ton projet..."
+                rows="4"
+                className="w-full bg-black/50 border border-blue-500/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-blue-500 transition resize-none"
+              />
+            </div>
+
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              type="submit"
+              className="w-full py-3 bg-gradient-to-r from-blue-500 to-cyan-500 text-white rounded-lg font-semibold hover:from-blue-600 hover:to-cyan-600 transition"
+            >
+              Réserver mon rendez-vous
+            </motion.button>
+          </form>
+        </div>
       </div>
     </motion.div>
   )
@@ -565,37 +680,164 @@ export default function NeonPortfolio() {
       className="min-h-screen pt-20 md:pt-32 pb-16 md:pb-20 bg-black flex items-center justify-center"
     >
       <div className="max-w-4xl mx-auto px-4 md:px-6 w-full">
-        <motion.div
-          initial={{ y: 20, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-        >
-          <h2 className="text-5xl md:text-7xl font-black mb-6 md:mb-8">
-            <span className="block text-white">ME</span>
-            <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">CONTACTER</span>
-          </h2>
+        <h2 className="text-5xl md:text-7xl font-black mb-6">
+          <span className="block text-white">ME</span>
+          <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">CONTACTER</span>
+        </h2>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mb-8 md:mb-12">
-            <div className="bg-gradient-to-br from-pink-950/20 to-purple-950/20 border border-pink-500/20 rounded-xl p-6 md:p-8">
-              <div className="text-4xl mb-4">📧</div>
-              <h3 className="text-lg md:text-xl font-bold text-pink-400 mb-2">Email</h3>
-              <p className="text-white text-base md:text-lg font-mono">hello@judev.com</p>
-            </div>
-
-            <div className="bg-gradient-to-br from-blue-950/20 to-cyan-950/20 border border-blue-500/20 rounded-xl p-6 md:p-8">
-              <div className="text-4xl mb-4">🔗</div>
-              <h3 className="text-lg md:text-xl font-bold text-blue-400 mb-2">Réseaux</h3>
-              <p className="text-gray-300 text-base">GitHub • LinkedIn • Instagram</p>
-            </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-8 mb-8 md:mb-12">
+          <div className="bg-gradient-to-br from-pink-950/20 to-purple-950/20 border border-pink-500/20 rounded-xl p-6 md:p-8">
+            <div className="text-4xl mb-4">📧</div>
+            <h3 className="text-lg md:text-xl font-bold text-pink-400 mb-2">Email</h3>
+            <p className="text-white text-base md:text-lg font-mono">hello@judev.com</p>
           </div>
 
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="px-8 md:px-12 py-4 w-full md:w-auto bg-gradient-to-r from-pink-500/30 to-purple-500/30 border border-pink-400 text-pink-300 rounded-lg hover:from-pink-500/40 hover:to-purple-500/40 transition font-semibold text-base md:text-lg"
+          <div className="bg-gradient-to-br from-blue-950/20 to-cyan-950/20 border border-blue-500/20 rounded-xl p-6 md:p-8">
+            <div className="text-4xl mb-4">💬</div>
+            <h3 className="text-lg md:text-xl font-bold text-blue-400 mb-2">Chat direct</h3>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              onClick={() => setShowChat(!showChat)}
+              className="text-blue-300 hover:text-blue-200 transition"
+            >
+              {showChat ? 'Fermer chat →' : 'Ouvrir chat →'}
+            </motion.button>
+          </div>
+        </div>
+
+        {/* Chat Widget */}
+        {showChat && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-gradient-to-br from-blue-950/30 to-cyan-950/30 border border-blue-500/30 rounded-xl p-4 md:p-6 mb-8"
           >
-            → Envoyer un message
-          </motion.button>
-        </motion.div>
+            <div className="space-y-4 max-h-96 overflow-y-auto mb-4">
+              {chatMessages.map((msg) => (
+                <div
+                  key={msg.id}
+                  className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div
+                    className={`max-w-xs px-4 py-2 rounded-lg ${
+                      msg.sender === 'user'
+                        ? 'bg-blue-500/30 text-blue-100 border border-blue-500/50'
+                        : 'bg-cyan-500/20 text-cyan-100 border border-cyan-500/30'
+                    }`}
+                  >
+                    {msg.text}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex gap-2">
+              <input
+                type="text"
+                value={chatInput}
+                onChange={(e) => setChatInput(e.target.value)}
+                onKeyPress={(e) => e.key === 'Enter' && handleChatSend()}
+                placeholder="Écris ton message..."
+                className="flex-1 bg-black/50 border border-blue-500/30 rounded-lg px-4 py-2 text-white focus:outline-none focus:border-blue-500"
+              />
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={handleChatSend}
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
+              >
+                Envoyer
+              </motion.button>
+            </div>
+          </motion.div>
+        )}
+
+        {/* Formulaire */}
+        <div className="bg-gradient-to-br from-pink-950/20 to-purple-950/20 border border-pink-500/20 rounded-xl p-6 md:p-12">
+          <form className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-white font-semibold mb-2">Nom</label>
+                <input
+                  type="text"
+                  placeholder="Ton nom"
+                  className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-pink-500 transition"
+                />
+              </div>
+
+              <div>
+                <label className="block text-white font-semibold mb-2">Email</label>
+                <input
+                  type="email"
+                  placeholder="tonemail@example.com"
+                  className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-pink-500 transition"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <label className="block text-white font-semibold mb-2">Téléphone</label>
+                <input
+                  type="tel"
+                  placeholder="+33 6 12 34 56 78"
+                  className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-pink-500 transition"
+                />
+              </div>
+
+              <div>
+                <label className="block text-white font-semibold mb-2">Entreprise</label>
+                <input
+                  type="text"
+                  placeholder="Nom entreprise (optionnel)"
+                  className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-pink-500 transition"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-white font-semibold mb-2">Sujet</label>
+              <select className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-pink-500 transition">
+                <option>Sélectionne un sujet</option>
+                <option>Nouveau projet</option>
+                <option>Consultation</option>
+                <option>Partenariat</option>
+                <option>Support</option>
+                <option>Autre</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-white font-semibold mb-2">Budget</label>
+              <select className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-pink-500 transition">
+                <option>Non défini</option>
+                <option>Moins de 500€</option>
+                <option>500€ - 1000€</option>
+                <option>1000€ - 5000€</option>
+                <option>5000€ - 10000€</option>
+                <option>Plus de 10000€</option>
+              </select>
+            </div>
+
+            <div>
+              <label className="block text-white font-semibold mb-2">Message détaillé</label>
+              <textarea
+                placeholder="Décris ton projet en détail..."
+                rows="6"
+                className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-pink-500 transition resize-none"
+              />
+            </div>
+
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              type="submit"
+              className="w-full py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg font-semibold hover:from-pink-600 hover:to-purple-600 transition"
+            >
+              Envoyer mon message
+            </motion.button>
+          </form>
+        </div>
       </div>
     </motion.div>
   )
@@ -607,12 +849,14 @@ export default function NeonPortfolio() {
         return <HomePage />
       case 'judev':
         return <JuDevPage />
-      case 'services':
-        return <ServicesPage />
-      case 'skills':
-        return <SkillsPage />
-      case 'about':
-        return <AboutPage />
+      case 'avis':
+        return <AvisPage />
+      case 'tarifs':
+        return <TarifsPage />
+      case 'faq':
+        return <FAQPage />
+      case 'booking':
+        return <BookingPage />
       case 'contact':
         return <ContactPage />
       default:
