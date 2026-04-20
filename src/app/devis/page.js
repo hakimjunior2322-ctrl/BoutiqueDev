@@ -166,7 +166,7 @@ const STYLES = `
 `
 
 export default function ContactPage() {
-  // Charge Vanta au mount
+  // Charger Vanta au mount
   React.useEffect(() => {
     const loadVanta = async () => {
       const three = document.createElement('script')
@@ -245,3 +245,4 @@ export default function ContactPage() {
       </div>
     </>
   )
+}
