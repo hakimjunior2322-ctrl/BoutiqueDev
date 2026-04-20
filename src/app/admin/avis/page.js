@@ -1,11 +1,147 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
 
+const STYLES = `
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Share+Tech+Mono&display=swap');
+  :root {
+    --green: #00ff41;
+    --amber: #ffb347;
+    --red: #ff0044;
+    --white: #e8e8ea;
+    --bg: #02050a;
+  }
+  * { cursor: none !important; }
+  body { font-family: 'Barlow', sans-serif !important; background: var(--bg) !important; color: var(--white) !important; }
+  
+  .cursor-block { position: fixed; width: 10px; height: 18px; background: var(--green); pointer-events: none; z-index: 9999; animation: blink 1s step-end infinite; transform: translate(-2px, -16px); mix-blend-mode: exclusion; }
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0; } }
+  
+  .grain::after { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 100; opacity: 0.035; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  .scanlines::before { content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 99; background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px); }
+  
+  .font-bebas { font-family: 'Bebas Neue', cursive !important; }
+  .font-mono { font-family: 'Share Tech Mono', monospace !important; }
+  
+  .glitch { position: relative; display: inline-block; }
+  .glitch:hover::before, .glitch:hover::after { content: attr(data-text); position: absolute; top: 0; left: 0; }
+  .glitch:hover::before { animation: g1 0.3s; color: var(--red); clip-path: polygon(0 0, 100% 0, 100% 33%, 0 33%); transform: translateX(-3px); }
+  .glitch:hover::after { animation: g2 0.3s; color: var(--green); clip-path: polygon(0 66%, 100% 66%, 100% 100%, 0 100%); transform: translateX(3px); }
+  @keyframes g1 { 0%,100% { transform: translateX(-3px); } 25% { transform: translateX(3px); } }
+  @keyframes g2 { 0%,100% { transform: translateX(3px); } 25% { transform: translateX(-3px); } }
+  
+  .section-line {
+    position: relative;
+    height: 1px;
+    background: linear-gradient(90deg, rgba(0,255,65,0.3), transparent);
+    overflow: hidden;
+  }
+  .section-line::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, var(--green), transparent);
+    animation: lineSlide 1.5s ease-in-out infinite;
+  }
+  @keyframes lineSlide {
+    0% { left: -100%; }
+    50% { left: 100%; }
+    100% { left: 100%; }
+  }
+  
+  .tilt-card {
+    transition: transform 0.2s ease-out;
+    transform-style: preserve-3d;
+  }
+  
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-track { background: #000; }
+  ::-webkit-scrollbar-thumb { background: var(--green); border-radius: 4px; }
+  ::selection { background: rgba(0,255,65,0.2); }
+  
+  @media (max-width: 768px) {
+    .font-bebas { font-size: max(1.2rem, 6vw) !important; }
+  }
+`
+
+function CodeRain() {
+  const canvasRef = useRef(null)
+  useEffect(() => {
+    const canvas = canvasRef.current
+    if (!canvas) return
+    const ctx = canvas.getContext('2d')
+    let W = canvas.width = window.innerWidth
+    let H = canvas.height = window.innerHeight
+
+    const resize = () => { W = canvas.width = window.innerWidth; H = canvas.height = window.innerHeight }
+    window.addEventListener('resize', resize)
+
+    const snippets = [
+      'const reviews = load()',
+      'if (approved) show()',
+      'await validate()',
+      'export feedback',
+      'function manage() {}',
+      'while (reviewing) check()',
+      'npm run review',
+    ]
+
+    const FONT_SIZE = 13
+    const cols = Math.floor(W / (FONT_SIZE * 1.1))
+    const drops = Array.from({ length: cols }, () => Math.random() * -100)
+    const colSnippets = Array.from({ length: cols }, () => snippets[Math.floor(Math.random() * snippets.length)])
+    const colSpeeds = Array.from({ length: cols }, () => 0.2 + Math.random() * 0.6)
+    const colOpacity = Array.from({ length: cols }, () => 0.04 + Math.random() * 0.12)
+
+    let raf
+    const draw = () => {
+      ctx.fillStyle = 'rgba(2,5,10,0.06)'
+      ctx.fillRect(0, 0, W, H)
+
+      for (let i = 0; i < cols; i++) {
+        const snippet = colSnippets[i]
+        const chars = snippet.split('')
+        const x = i * FONT_SIZE * 1.1
+
+        chars.forEach((char, j) => {
+          const y = (drops[i] + j) * FONT_SIZE
+          if (y < 0 || y > H + 50) return
+          ctx.font = `${FONT_SIZE}px "Share Tech Mono", monospace`
+          if (j === 0) {
+            ctx.fillStyle = `rgba(180,255,200,${colOpacity[i] * 4})`
+          } else {
+            const fade = 1 - j / chars.length
+            ctx.fillStyle = `rgba(0,255,65,${colOpacity[i] * fade * 1.5})`
+          }
+          ctx.fillText(char, x, y)
+        })
+
+        drops[i] += colSpeeds[i]
+        if (drops[i] * FONT_SIZE > H + 200) {
+          drops[i] = -30 - Math.random() * 50
+          colSnippets[i] = snippets[Math.floor(Math.random() * snippets.length)]
+        }
+      }
+      raf = requestAnimationFrame(draw)
+    }
+    draw()
+    return () => { cancelAnimationFrame(raf); window.removeEventListener('resize', resize) }
+  }, [])
+  return <canvas ref={canvasRef} style={{ position:'fixed', inset:0, zIndex:1, pointerEvents:'none', opacity:0.8 }} />
+}
+
+function GlitchH({ children, style = {} }) {
+  return <span className={`glitch font-bebas`} data-text={children} style={style}>{children}</span>
+}
+
 export default function AvisPage() {
   const router = useRouter()
+  const [mousePos, setMousePos] = useState({ x: 0, y: 0 })
   const [avis, setAvis] = useState([])
   const [loading, setLoading] = useState(true)
   const [filterStatus, setFilterStatus] = useState('approved')
@@ -18,6 +154,12 @@ export default function AvisPage() {
     }
     fetchAvis()
   }, [router, filterStatus])
+
+  useEffect(() => {
+    const onMove = e => setMousePos({ x: e.clientX, y: e.clientY })
+    window.addEventListener('mousemove', onMove)
+    return () => window.removeEventListener('mousemove', onMove)
+  }, [])
 
   const fetchAvis = async () => {
     try {
@@ -66,96 +208,196 @@ export default function AvisPage() {
     }
   }
 
-  return (
-    <div className="min-h-screen bg-black">
-      {/* ← BOUTON RETOUR */}
-      <button
-        onClick={() => router.back()}
-        className="fixed top-6 left-6 z-50 px-4 py-2 bg-cyan-400/20 border border-cyan-400 text-cyan-400 rounded-lg hover:bg-cyan-400/30 transition"
-      >
-        ← Retour
-      </button>
+  const pageVariants = {
+    initial: { opacity: 0, y: 20 },
+    animate: { opacity: 1, y: 0, transition: { duration: 0.6 } },
+    exit: { opacity: 0, y: -20, transition: { duration: 0.3 } }
+  }
 
-      {/* Header */}
-      <div className="bg-black border-b border-pink-500/20 sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-6 py-4">
-          <h1 className="text-2xl font-black text-white mb-4">Gestion des Avis</h1>
-          <div className="flex gap-2">
+  return (
+    <>
+      <style>{STYLES}</style>
+      <div className="cursor-block" style={{ left: mousePos.x, top: mousePos.y }} />
+      <div className="grain scanlines" style={{ position: 'fixed', inset: 0, zIndex: 98, pointerEvents: 'none' }} />
+      <CodeRain />
+      <div style={{ position: 'fixed', inset: 0, zIndex: 2, pointerEvents: 'none', background: 'radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(2,5,10,0.8) 100%)' }} />
+
+      <motion.div variants={pageVariants} initial="initial" animate="animate" className="min-h-screen pt-16 md:pt-20 pb-16 md:pb-20 relative" style={{ zIndex: 10 }}>
+        {/* HEADER */}
+        <nav className="fixed top-0 left-0 right-0 z-40" style={{ background: 'rgba(2,5,10,0.85)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(0,255,65,0.12)' }}>
+          <div className="max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between">
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => router.back()}
+              className="font-mono px-3 md:px-6 py-2 md:py-3 rounded-lg font-semibold text-xs md:text-sm transition-all"
+              style={{ background: 'rgba(0,255,65,0.1)', border: '1px solid rgba(0,255,65,0.3)', color: 'var(--green)' }}
+            >
+              ← RETOUR
+            </motion.button>
+
+            <h1 className="font-bebas text-lg md:text-2xl font-black" style={{ color: 'var(--green)', textShadow: '0 0 20px rgba(0,255,65,0.5)', letterSpacing: '2px' }}>
+              AVIS
+            </h1>
+
+            <div />
+          </div>
+        </nav>
+
+        {/* MAIN CONTENT */}
+        <div className="max-w-7xl mx-auto px-4 md:px-6 py-12 md:py-20">
+          {/* TITLE SECTION */}
+          <div className="mb-12 md:mb-16">
+            <div className="flex items-center gap-4 mb-6">
+              <div style={{ width: 2, height: 40, background: 'var(--amber)', boxShadow: '0 0 12px rgba(255,179,71,0.6)' }} />
+              <div className="section-line" style={{ flex: 1, maxWidth: 100 }} />
+              <p className="font-mono text-xs" style={{ color: 'var(--amber)', letterSpacing: '3px', textTransform: 'uppercase' }}>
+                GESTION
+              </p>
+            </div>
+            <h2 className="font-bebas leading-tight" style={{ fontSize: 'clamp(2rem, 7vw, 3.5rem)', letterSpacing: '-1px', lineHeight: '0.9' }}>
+              <span style={{ color: 'var(--white)' }}>LES</span><br/>
+              <GlitchH style={{ color: 'var(--green)', textShadow: '0 0 30px rgba(0,255,65,0.4)' }}>AVIS</GlitchH>
+            </h2>
+          </div>
+
+          {/* FILTERS */}
+          <div className="flex gap-3 md:gap-4 mb-12 flex-wrap">
             {['approved', 'pending'].map(status => (
               <motion.button
                 key={status}
                 whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
                 onClick={() => setFilterStatus(status)}
-                className={`px-4 py-2 rounded-lg transition ${
-                  filterStatus === status
-                    ? 'bg-pink-500/30 border border-pink-500 text-pink-400'
-                    : 'bg-gray-500/10 border border-gray-500/30 text-gray-400 hover:border-pink-500/50'
-                }`}
+                className="font-mono px-4 md:px-6 py-2 md:py-3 rounded-lg font-semibold text-xs md:text-sm transition-all cursor-none"
+                style={{
+                  background: filterStatus === status ? 'rgba(0,255,65,0.12)' : 'rgba(6,12,20,0.8)',
+                  border: filterStatus === status ? '1px solid rgba(0,255,65,0.4)' : '1px solid rgba(0,255,65,0.1)',
+                  color: filterStatus === status ? 'var(--green)' : 'rgba(0,255,65,0.5)',
+                  textShadow: filterStatus === status ? '0 0 10px rgba(0,255,65,0.5)' : 'none',
+                  boxShadow: filterStatus === status ? '0 0 15px rgba(0,255,65,0.2)' : 'none'
+                }}
               >
-                {status === 'approved' ? 'Approuvés' : 'En attente'}
+                {status === 'approved' ? '✓ APPROUVÉS' : '⏳ EN ATTENTE'}
               </motion.button>
             ))}
           </div>
-        </div>
-      </div>
 
-      {/* Content */}
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        {loading ? (
-          <div className="text-center py-12">
-            <p className="text-gray-400">Chargement...</p>
-          </div>
-        ) : (
-          <div className="space-y-6">
-            {avis.map((item, i) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-                className="bg-gradient-to-br from-pink-950/20 to-purple-950/20 border border-pink-500/20 rounded-xl p-6 hover:border-pink-500/50 transition"
-              >
-                <div className="flex justify-between items-start mb-4">
-                  <div>
-                    <h3 className="text-xl font-bold text-white">{item.name}</h3>
-                    <p className="text-gray-400 text-sm">{item.business}</p>
+          {/* CONTENT */}
+          {loading ? (
+            <div className="text-center py-20">
+              <p className="font-mono" style={{ color: 'rgba(0,255,65,0.4)' }}>[ CHARGEMENT... ]</p>
+            </div>
+          ) : avis.length === 0 ? (
+            <div className="text-center py-20 rounded-lg" style={{ background: 'rgba(6,12,20,0.8)', border: '1px solid rgba(0,255,65,0.1)' }}>
+              <p className="font-mono text-lg" style={{ color: 'rgba(0,255,65,0.4)' }}>
+                [ AUCUN AVIS {filterStatus === 'pending' ? 'EN ATTENTE' : 'APPROUVÉ'} ]
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4 md:space-y-6">
+              {avis.map((item, i) => (
+                <motion.div
+                  key={item.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.05, duration: 0.6 }}
+                  className="tilt-card rounded-lg p-5 md:p-8 transition-all group cursor-none"
+                  style={{
+                    background: 'rgba(6,12,20,0.8)',
+                    border: '1px solid rgba(0,255,65,0.1)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.border = '1px solid rgba(0,255,65,0.4)';
+                    e.currentTarget.style.boxShadow = '0 0 20px rgba(0,255,65,0.2)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.border = '1px solid rgba(0,255,65,0.1)';
+                    e.currentTarget.style.boxShadow = 'none';
+                  }}
+                >
+                  {/* Header */}
+                  <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-6">
+                    <div className="flex-1">
+                      <h3 className="font-bebas text-lg md:text-2xl mb-1" style={{ color: 'var(--green)', textShadow: '0 0 10px rgba(0,255,65,0.3)' }}>
+                        {item.name}
+                      </h3>
+                      <p className="font-mono text-xs md:text-sm" style={{ color: 'rgba(0,255,65,0.5)' }}>
+                        {item.business || 'Client'}
+                      </p>
+                    </div>
+
+                    {/* Rating */}
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-xs" style={{ color: 'rgba(0,255,65,0.4)', letterSpacing: '1px' }}>
+                        NOTE
+                      </span>
+                      <div className="text-xl md:text-2xl" style={{ filter: 'drop-shadow(0 0 8px rgba(255,179,71,0.4))' }}>
+                        {'⭐'.repeat(item.rating || 5)}
+                      </div>
+                    </div>
                   </div>
-                  <div className="text-2xl">
-                    {'⭐'.repeat(item.rating)}
+
+                  {/* Content */}
+                  <div className="mb-6 pb-6" style={{ borderBottom: '1px solid rgba(0,255,65,0.1)' }}>
+                    <p className="text-sm md:text-base italic" style={{ color: 'rgba(232,232,234,0.7)', lineHeight: '1.6' }}>
+                      "{item.text}"
+                    </p>
                   </div>
-                </div>
 
-                <p className="text-gray-300 mb-6 italic">"{item.text}"</p>
-
-                <div className="flex gap-2">
-                  {filterStatus === 'pending' && (
+                  {/* Actions */}
+                  <div className="flex flex-col md:flex-row gap-3 md:gap-4">
+                    {filterStatus === 'pending' && (
+                      <motion.button
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => handleApprove(item.id)}
+                        className="flex-1 font-mono px-4 md:px-6 py-2 md:py-3 rounded-lg font-semibold text-xs md:text-sm transition-all cursor-none"
+                        style={{
+                          background: 'rgba(0,255,65,0.1)',
+                          border: '1px solid rgba(0,255,65,0.3)',
+                          color: 'var(--green)',
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = 'rgba(0,255,65,0.2)';
+                          e.currentTarget.style.boxShadow = '0 0 15px rgba(0,255,65,0.3)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = 'rgba(0,255,65,0.1)';
+                          e.currentTarget.style.boxShadow = 'none';
+                        }}
+                      >
+                        ✓ APPROUVER
+                      </motion.button>
+                    )}
                     <motion.button
                       whileHover={{ scale: 1.05 }}
-                      onClick={() => handleApprove(item.id)}
-                      className="flex-1 px-4 py-2 bg-green-500/20 border border-green-500/50 text-green-400 rounded-lg hover:bg-green-500/30 transition"
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => handleDelete(item.id)}
+                      className="flex-1 font-mono px-4 md:px-6 py-2 md:py-3 rounded-lg font-semibold text-xs md:text-sm transition-all cursor-none"
+                      style={{
+                        background: 'rgba(255,0,68,0.1)',
+                        border: '1px solid rgba(255,0,68,0.3)',
+                        color: 'var(--red)',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(255,0,68,0.2)';
+                        e.currentTarget.style.boxShadow = '0 0 15px rgba(255,0,68,0.3)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'rgba(255,0,68,0.1)';
+                        e.currentTarget.style.boxShadow = 'none';
+                      }}
                     >
-                      ✓ Approuver
+                      🗑️ SUPPRIMER
                     </motion.button>
-                  )}
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    onClick={() => handleDelete(item.id)}
-                    className="flex-1 px-4 py-2 bg-red-500/20 border border-red-500/50 text-red-400 rounded-lg hover:bg-red-500/30 transition"
-                  >
-                    Supprimer
-                  </motion.button>
-                </div>
-              </motion.div>
-            ))}
-
-            {avis.length === 0 && (
-              <div className="text-center py-12">
-                <p className="text-gray-400">Aucun avis {filterStatus === 'pending' ? 'en attente' : 'approuvé'}</p>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
+        </div>
+      </motion.div>
+    </>
   )
 }
