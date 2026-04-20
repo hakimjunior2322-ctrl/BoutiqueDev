@@ -1,150 +1,247 @@
-
 'use client'
-import { useState } from 'react'
 
-export default function DevisPage() {
-  const [form, setForm] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    company: '',
-    budget: '',
-    project_type: 'website',
-    message: '',
-  })
-  const [submitting, setSubmitting] = useState(false)
-  const [success, setSuccess] = useState('')
+import React from 'react'
 
-  const handleSubmit = async e => {
-    e.preventDefault()
-    setSubmitting(true)
-    await fetch('/api/devis', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        ...form,
-        budget: parseInt(form.budget) || 0,
-        status: 'new',
-      }),
-    })
-    setSuccess('✓ Devis envoyé ! Nous vous recontacterons très bientôt.')
-    setForm({
-      name: '',
-      email: '',
-      phone: '',
-      company: '',
-      budget: '',
-      project_type: 'website',
-      message: '',
-    })
-    setSubmitting(false)
-    setTimeout(() => setSuccess(''), 3000)
+const STYLES = `
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  html, body { width: 100%; height: 100%; }
+  
+  body { 
+    font-family: 'Inter', sans-serif;
+    background: #0a0a0a;
+    color: #fff;
+    overflow-x: hidden;
   }
+  
+  h1, h2, h3 { font-family: 'Poppins', sans-serif; color: #fff; }
+  
+  #vanta-bg {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+  }
+  
+  .wrapper {
+    position: relative;
+    z-index: 2;
+  }
+  
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 0 20px;
+  }
+  
+  .contact-section {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+  }
+  
+  .contact-content {
+    text-align: center;
+  }
+  
+  .contact-content h1 {
+    font-size: clamp(32px, 8vw, 64px);
+    margin-bottom: 20px;
+    font-weight: 900;
+    color: #fff;
+    letter-spacing: -1px;
+  }
+  
+  .contact-content p {
+    font-size: 16px;
+    color: #ccc;
+    margin-bottom: 60px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .contact-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 40px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .contact-card {
+    background: rgba(50, 50, 60, 0.2);
+    border: 1px solid rgba(255, 107, 157, 0.15);
+    padding: 40px 30px;
+    border-radius: 16px;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+  }
+  
+  .contact-card:hover {
+    border-color: #ff6b9d;
+    transform: translateY(-10px);
+    box-shadow: 0 20px 50px rgba(255, 107, 157, 0.2);
+  }
+  
+  .contact-icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+    display: block;
+  }
+  
+  .contact-label {
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #ff6b9d;
+    margin-bottom: 10px;
+  }
+  
+  .contact-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: #fff;
+    word-break: break-word;
+  }
+  
+  .contact-value a {
+    color: #ff6b9d;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+  
+  .contact-value a:hover {
+    text-decoration: underline;
+  }
+  
+  footer {
+    border-top: 1px solid rgba(255, 107, 157, 0.1);
+    padding: 30px 0;
+    text-align: center;
+    font-size: 12px;
+    color: #999;
+    margin-top: 60px;
+  }
+  
+  @media (max-width: 768px) {
+    .contact-section {
+      padding: 40px 20px;
+    }
+    
+    .contact-content h1 {
+      font-size: 36px;
+    }
+    
+    .contact-content p {
+      font-size: 14px;
+      margin-bottom: 40px;
+    }
+    
+    .contact-info-grid {
+      grid-template-columns: 1fr;
+      gap: 25px;
+    }
+    
+    .contact-card {
+      padding: 30px 20px;
+    }
+    
+    .contact-icon {
+      font-size: 40px;
+      margin-bottom: 15px;
+    }
+    
+    .contact-value {
+      font-size: 16px;
+    }
+  }
+`
+
+export default function ContactPage() {
+  // Charge Vanta au mount
+  React.useEffect(() => {
+    const loadVanta = async () => {
+      const three = document.createElement('script')
+      three.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js'
+      three.async = true
+      document.head.appendChild(three)
+
+      three.onload = () => {
+        const vanta = document.createElement('script')
+        vanta.src = 'https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.waves.min.js'
+        vanta.async = true
+        document.head.appendChild(vanta)
+
+        vanta.onload = () => {
+          setTimeout(() => {
+            if (window.VANTA) {
+              window.VANTA.WAVES({
+                el: '#vanta-bg',
+                mouseControls: true,
+                touchControls: true,
+                gyroControls: false,
+                minHeight: 200,
+                minWidth: 200,
+                scale: 1,
+                scaleMobile: 1,
+                color: 0x0
+              })
+            }
+          }, 200)
+        }
+      }
+    }
+    loadVanta()
+  }, [])
 
   return (
-    <div className="min-h-screen bg-black" style={{ WebkitTouchCallout: 'default', WebkitUserSelect: 'text' }}>
-      <div className="py-12 text-center">
-        <h1 className="text-5xl font-black text-yellow-400">DEMANDE DE DEVIS</h1>
-        <p className="text-gray-400 mt-2">Décrivez votre projet et recevez un devis gratuit</p>
+    <>
+      <style>{STYLES}</style>
+      <div id="vanta-bg"></div>
+      
+      <div className="wrapper">
+        <div className="contact-section">
+          <div className="container">
+            <div className="contact-content">
+              <h1>Contactez-nous</h1>
+              <p>Nous sommes là pour répondre à vos questions et discuter de vos projets</p>
+              
+              <div className="contact-info-grid">
+                {/* EMAIL */}
+                <div className="contact-card">
+                  <span className="contact-icon">📧</span>
+                  <div className="contact-label">Email</div>
+                  <div className="contact-value">
+                    <a href="mailto:contact@judev.store">contact@judev.store</a>
+                  </div>
+                </div>
+                
+                {/* TÉLÉPHONE */}
+                <div className="contact-card">
+                  <span className="contact-icon">📱</span>
+                  <div className="contact-label">Téléphone</div>
+                  <div className="contact-value">
+                    <a href="tel:+33612345678">+33 6 12 34 56 78</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <footer>
+          <div className="container">
+            <p>© 2026 JuDev — Design créatif et innovant ✨</p>
+          </div>
+        </footer>
       </div>
-      <div className="max-w-3xl mx-auto px-6 py-12">
-        {success && (
-          <div className="bg-green-500/20 border border-green-500 text-green-400 p-4 rounded-lg mb-8 text-center">
-            {success}
-          </div>
-        )}
-        <form onSubmit={handleSubmit} className="space-y-6 bg-yellow-950/20 border border-yellow-500/30 rounded-xl p-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <input
-              type="text"
-              inputMode="text"
-              placeholder="Nom *"
-              value={form.name}
-              onChange={e => setForm({ ...form, name: e.target.value })}
-              autoComplete="name"
-              className="w-full px-4 py-3 bg-black/60 border border-yellow-400/30 rounded-lg text-white"
-              style={{ fontSize: '16px', WebkitAppearance: 'none' }}
-              required
-            />
-            <input
-              type="email"
-              inputMode="email"
-              placeholder="Email *"
-              value={form.email}
-              onChange={e => setForm({ ...form, email: e.target.value })}
-              autoComplete="email"
-              className="w-full px-4 py-3 bg-black/60 border border-yellow-400/30 rounded-lg text-white"
-              style={{ fontSize: '16px', WebkitAppearance: 'none' }}
-              required
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <input
-              type="tel"
-              inputMode="tel"
-              placeholder="Téléphone *"
-              value={form.phone}
-              onChange={e => setForm({ ...form, phone: e.target.value })}
-              autoComplete="tel"
-              className="w-full px-4 py-3 bg-black/60 border border-yellow-400/30 rounded-lg text-white"
-              style={{ fontSize: '16px', WebkitAppearance: 'none' }}
-              required
-            />
-            <input
-              type="text"
-              placeholder="Entreprise"
-              value={form.company}
-              onChange={e => setForm({ ...form, company: e.target.value })}
-              autoComplete="organization"
-              className="w-full px-4 py-3 bg-black/60 border border-yellow-400/30 rounded-lg text-white"
-              style={{ fontSize: '16px', WebkitAppearance: 'none' }}
-            />
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <select
-              value={form.project_type}
-              onChange={e => setForm({ ...form, project_type: e.target.value })}
-              className="w-full px-4 py-3 bg-black/60 border border-yellow-400/30 rounded-lg text-white"
-              style={{ fontSize: '16px', WebkitAppearance: 'none' }}
-            >
-              <option value="website">Site Web</option>
-              <option value="app">Application Mobile</option>
-              <option value="ecommerce">E-Commerce</option>
-              <option value="design">Design Graphique</option>
-              <option value="autre">Autre</option>
-            </select>
-            <input
-              type="number"
-              inputMode="numeric"
-              placeholder="Budget estimé (€)"
-              value={form.budget}
-              onChange={e => setForm({ ...form, budget: e.target.value })}
-              className="w-full px-4 py-3 bg-black/60 border border-yellow-400/30 rounded-lg text-white"
-              style={{ fontSize: '16px', WebkitAppearance: 'none' }}
-            />
-          </div>
-
-          <textarea
-            placeholder="Décrivez votre projet *"
-            value={form.message}
-            onChange={e => setForm({ ...form, message: e.target.value })}
-            rows="6"
-            className="w-full px-4 py-3 bg-black/60 border border-yellow-400/30 rounded-lg text-white"
-            style={{ fontSize: '16px', WebkitAppearance: 'none' }}
-            required
-          />
-
-          <button
-            type="submit"
-            disabled={submitting}
-            className="w-full px-6 py-4 bg-yellow-400/20 border border-yellow-400 text-yellow-400 rounded-lg font-bold hover:bg-yellow-400/30 disabled:opacity-50"
-          >
-            {submitting ? 'Envoi en cours...' : '📤 Envoyer la demande de devis'}
-          </button>
-        </form>
-      </div>
-    </div>
+    </>
   )
-}
