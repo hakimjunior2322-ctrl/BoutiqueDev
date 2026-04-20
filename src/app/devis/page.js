@@ -1,3 +1,4 @@
+cat > /mnt/user-data/outputs/DevisPage_FIXED.jsx << 'ENDOFFILE'
 'use client'
 import { useState } from 'react'
 
@@ -41,7 +42,7 @@ export default function DevisPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-black" style={{ WebkitTouchCallout: 'default', WebkitUserSelect: 'text' }}>
       <div className="py-12 text-center">
         <h1 className="text-5xl font-black text-yellow-400">DEMANDE DE DEVIS</h1>
         <p className="text-gray-400 mt-2">Décrivez votre projet et recevez un devis gratuit</p>
@@ -56,18 +57,24 @@ export default function DevisPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <input
               type="text"
+              inputMode="text"
               placeholder="Nom *"
               value={form.name}
               onChange={e => setForm({ ...form, name: e.target.value })}
+              autoComplete="name"
               className="w-full px-4 py-3 bg-black/60 border border-yellow-400/30 rounded-lg text-white"
+              style={{ fontSize: '16px', WebkitAppearance: 'none' }}
               required
             />
             <input
               type="email"
+              inputMode="email"
               placeholder="Email *"
               value={form.email}
               onChange={e => setForm({ ...form, email: e.target.value })}
+              autoComplete="email"
               className="w-full px-4 py-3 bg-black/60 border border-yellow-400/30 rounded-lg text-white"
+              style={{ fontSize: '16px', WebkitAppearance: 'none' }}
               required
             />
           </div>
@@ -75,10 +82,13 @@ export default function DevisPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <input
               type="tel"
+              inputMode="tel"
               placeholder="Téléphone *"
               value={form.phone}
               onChange={e => setForm({ ...form, phone: e.target.value })}
+              autoComplete="tel"
               className="w-full px-4 py-3 bg-black/60 border border-yellow-400/30 rounded-lg text-white"
+              style={{ fontSize: '16px', WebkitAppearance: 'none' }}
               required
             />
             <input
@@ -86,7 +96,9 @@ export default function DevisPage() {
               placeholder="Entreprise"
               value={form.company}
               onChange={e => setForm({ ...form, company: e.target.value })}
+              autoComplete="organization"
               className="w-full px-4 py-3 bg-black/60 border border-yellow-400/30 rounded-lg text-white"
+              style={{ fontSize: '16px', WebkitAppearance: 'none' }}
             />
           </div>
 
@@ -95,6 +107,7 @@ export default function DevisPage() {
               value={form.project_type}
               onChange={e => setForm({ ...form, project_type: e.target.value })}
               className="w-full px-4 py-3 bg-black/60 border border-yellow-400/30 rounded-lg text-white"
+              style={{ fontSize: '16px', WebkitAppearance: 'none' }}
             >
               <option value="website">Site Web</option>
               <option value="app">Application Mobile</option>
@@ -104,10 +117,12 @@ export default function DevisPage() {
             </select>
             <input
               type="number"
+              inputMode="numeric"
               placeholder="Budget estimé (€)"
               value={form.budget}
               onChange={e => setForm({ ...form, budget: e.target.value })}
               className="w-full px-4 py-3 bg-black/60 border border-yellow-400/30 rounded-lg text-white"
+              style={{ fontSize: '16px', WebkitAppearance: 'none' }}
             />
           </div>
 
@@ -117,6 +132,7 @@ export default function DevisPage() {
             onChange={e => setForm({ ...form, message: e.target.value })}
             rows="6"
             className="w-full px-4 py-3 bg-black/60 border border-yellow-400/30 rounded-lg text-white"
+            style={{ fontSize: '16px', WebkitAppearance: 'none' }}
             required
           />
 
@@ -132,3 +148,5 @@ export default function DevisPage() {
     </div>
   )
 }
+ENDOFFILE
+cat /mnt/user-data/outputs/DevisPage_FIXED.jsx
