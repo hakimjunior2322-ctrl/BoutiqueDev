@@ -3,515 +3,10 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 
-const STYLES = `
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
-  
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  
-  html, body { width: 100%; height: 100%; }
-  
-  body { 
-    font-family: 'Inter', sans-serif;
-    background: #0a0a0a;
-    color: #fff;
-    overflow-x: hidden;
-  }
-  
-  h1, h2, h3 { font-family: 'Poppins', sans-serif; color: #fff; }
-  
-  #vanta-bg {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-  }
-  
-  .wrapper {
-    position: relative;
-    z-index: 2;
-  }
-  
-  .nav {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    background: rgba(10, 10, 10, 0.95);
-    backdrop-filter: blur(20px);
-    border-bottom: 1px solid rgba(100, 100, 100, 0.1);
-    z-index: 50;
-    padding: 16px 20px;
-  }
-  
-  .nav-content {
-    max-width: 1400px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .logo {
-    font-size: 20px;
-    font-weight: 800;
-    cursor: pointer;
-    color: #fff;
-    border: none;
-    background: none;
-    font-family: 'Poppins', sans-serif;
-  }
-  
-  .nav-links {
-    display: flex;
-    gap: 30px;
-    align-items: center;
-  }
-  
-  .nav-link {
-    font-size: 13px;
-    font-weight: 500;
-    cursor: pointer;
-    border: none;
-    background: none;
-    color: #ccc;
-    transition: all 0.3s;
-  }
-  
-  .nav-link:hover {
-    color: #ff6b9d;
-  }
-  
-  .container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 20px;
-  }
-  
-  .hero {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    padding-top: 80px;
-  }
-  
-  .hero-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 60px;
-    align-items: center;
-  }
-  
-  .hero-content h1 {
-    font-size: clamp(36px, 8vw, 72px);
-    line-height: 1.1;
-    margin-bottom: 20px;
-    font-weight: 900;
-    letter-spacing: -1px;
-  }
-  
-  .hero-label {
-    font-size: 16px;
-    color: #fff;
-    margin-bottom: 15px;
-    font-weight: 500;
-  }
-  
-  .hero-desc {
-    font-size: 16px;
-    color: #ccc;
-    line-height: 1.7;
-    margin-bottom: 40px;
-  }
-  
-  .button-group {
-    display: flex;
-    gap: 15px;
-  }
-  
-  .btn {
-    padding: 12px 28px;
-    border: 2px solid #ff6b9d;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    transition: all 0.3s;
-    background: linear-gradient(135deg, #ff6b9d, #ff8fae);
-    color: #fff;
-    border-radius: 50px;
-  }
-  
-  .btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 40px rgba(255, 107, 157, 0.3);
-  }
-  
-  .btn-secondary {
-    background: transparent;
-    color: #ff6b9d;
-  }
-  
-  .btn-secondary:hover {
-    background: rgba(255, 107, 157, 0.1);
-  }
-  
-  .carousel-container {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  
-  .carousel-box {
-    position: relative;
-    width: 100%;
-    height: 400px;
-    border-radius: 16px;
-    overflow: hidden;
-    background: rgba(50, 50, 60, 0.2);
-    border: 1px solid rgba(255, 107, 157, 0.1);
-  }
-  
-  .carousel-image {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    animation: fadeIn 0.5s ease;
-  }
-  
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
-  
-  .carousel-arrow {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 50px;
-    height: 50px;
-    background: rgba(255, 107, 157, 0.2);
-    border: 2px solid #ff6b9d;
-    color: #ff6b9d;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 24px;
-    border-radius: 50%;
-    transition: all 0.3s;
-    z-index: 10;
-    user-select: none;
-  }
-  
-  .carousel-arrow:hover {
-    background: rgba(255, 107, 157, 0.4);
-    transform: translateY(-50%) scale(1.1);
-  }
-  
-  .carousel-arrow.prev {
-    left: 15px;
-  }
-  
-  .carousel-arrow.next {
-    right: 15px;
-  }
-  
-  .carousel-label {
-    text-align: center;
-    padding: 20px;
-    background: rgba(10, 10, 10, 0.5);
-    font-size: 24px;
-    font-weight: 700;
-    border-radius: 8px;
-  }
-  
-  .section {
-    padding: 120px 0;
-    position: relative;
-  }
-  
-  .section h2 {
-    font-size: clamp(36px, 7vw, 64px);
-    margin-bottom: 50px;
-    font-weight: 900;
-    letter-spacing: -1px;
-  }
-  
-  .gallery {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 30px;
-  }
-  
-  .gallery-item {
-    aspect-ratio: 1;
-    background: rgba(50, 50, 60, 0.2);
-    border: 1px solid rgba(255, 107, 157, 0.15);
-    cursor: pointer;
-    overflow: hidden;
-    border-radius: 16px;
-    transition: all 0.5s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 600;
-    color: #fff;
-    backdrop-filter: blur(10px);
-  }
-  
-  .gallery-item:hover {
-    border-color: #ff6b9d;
-    transform: translateY(-15px);
-    box-shadow: 0 30px 60px rgba(255, 107, 157, 0.2);
-  }
-  
-  .pricing {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px;
-  }
-  
-  .price-card {
-    border: 1px solid rgba(255, 107, 157, 0.15);
-    padding: 40px 30px;
-    background: rgba(50, 50, 60, 0.2);
-    border-radius: 16px;
-    transition: all 0.5s ease;
-    backdrop-filter: blur(10px);
-  }
-  
-  .price-card:hover {
-    border-color: #ff6b9d;
-    transform: translateY(-15px);
-    box-shadow: 0 30px 60px rgba(255, 107, 157, 0.15);
-  }
-  
-  .price-card.highlight {
-    border-color: #ff6b9d;
-    background: rgba(255, 107, 157, 0.1);
-    transform: scale(1.02);
-  }
-  
-  .price-card h3 {
-    font-size: 24px;
-    margin-bottom: 10px;
-    font-weight: 700;
-  }
-  
-  .price-desc {
-    color: #ccc;
-    font-size: 13px;
-    margin-bottom: 20px;
-  }
-  
-  .price {
-    font-size: 42px;
-    font-weight: 900;
-    margin: 20px 0;
-    color: #ff6b9d;
-  }
-  
-  .features-list {
-    text-align: left;
-    margin: 30px 0;
-    font-size: 14px;
-    line-height: 2.2;
-    color: #ccc;
-  }
-  
-  .features-list li {
-    list-style: none;
-  }
-  
-  .contact-form {
-    max-width: 600px;
-  }
-  
-  .form-group {
-    margin-bottom: 25px;
-  }
-  
-  .form-group label {
-    display: block;
-    font-size: 12px;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
-    color: #fff;
-  }
-  
-  .form-group input,
-  .form-group textarea {
-    width: 100%;
-    padding: 12px 15px;
-    border: 1px solid rgba(255, 107, 157, 0.15);
-    font-family: 'Inter', sans-serif;
-    font-size: 15px;
-    background: rgba(50, 50, 60, 0.3);
-    color: #fff;
-    transition: all 0.3s;
-    border-radius: 8px;
-  }
-  
-  .form-group input:focus,
-  .form-group textarea:focus {
-    outline: none;
-    border-color: #ff6b9d;
-    background: rgba(50, 50, 60, 0.5);
-    box-shadow: 0 0 20px rgba(255, 107, 157, 0.15);
-  }
-  
-  .form-group textarea {
-    resize: none;
-    min-height: 120px;
-  }
-  
-  footer {
-    border-top: 1px solid rgba(255, 107, 157, 0.1);
-    padding: 50px 0;
-    text-align: center;
-    font-size: 13px;
-    color: #999;
-  }
-  
-  @media (max-width: 1024px) {
-    .hero-grid {
-      grid-template-columns: 1fr;
-      gap: 40px;
-    }
-    
-    .carousel-box {
-      height: 300px;
-    }
-  }
-  
-  @media (max-width: 768px) {
-    .nav {
-      padding: 12px 16px;
-    }
-    
-    .nav-links {
-      gap: 15px;
-    }
-    
-    .nav-link {
-      font-size: 11px;
-    }
-    
-    .hero {
-      padding-top: 70px;
-    }
-    
-    .container {
-      padding: 0 16px;
-    }
-    
-    .button-group {
-      flex-direction: column;
-      gap: 10px;
-    }
-    
-    .btn {
-      width: 100%;
-      padding: 11px 20px;
-      font-size: 12px;
-    }
-    
-    .carousel-box {
-      height: 220px;
-    }
-    
-    .carousel-arrow {
-      width: 40px;
-      height: 40px;
-      font-size: 18px;
-    }
-    
-    .carousel-label {
-      font-size: 18px;
-      padding: 15px;
-    }
-    
-    .gallery {
-      grid-template-columns: 1fr;
-      gap: 20px;
-    }
-    
-    .pricing {
-      grid-template-columns: 1fr;
-      gap: 20px;
-    }
-    
-    .price-card.highlight {
-      transform: scale(1);
-    }
-    
-    .section {
-      padding: 60px 0;
-    }
-    
-    .section h2 {
-      font-size: 32px;
-      margin-bottom: 30px;
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .nav {
-      padding: 10px 12px;
-    }
-    
-    .logo {
-      font-size: 18px;
-    }
-    
-    .nav-links {
-      gap: 10px;
-    }
-    
-    .nav-link {
-      font-size: 10px;
-    }
-    
-    .hero-content h1 {
-      font-size: 28px;
-    }
-    
-    .hero-label {
-      font-size: 13px;
-    }
-    
-    .hero-desc {
-      font-size: 14px;
-    }
-    
-    .carousel-box {
-      height: 180px;
-    }
-    
-    .carousel-arrow {
-      width: 35px;
-      height: 35px;
-      font-size: 16px;
-    }
-    
-    .carousel-label {
-      font-size: 16px;
-    }
-    
-    .section h2 {
-      font-size: 26px;
-    }
-  }
-`
-
 export default function Home() {
   const [currentPage, setCurrentPage] = useState('home')
   const [carouselIndex, setCarouselIndex] = useState(0)
+  const [isDarkMode, setIsDarkMode] = useState(true)
 
   useEffect(() => {
     const loadVanta = async () => {
@@ -538,7 +33,7 @@ export default function Home() {
                 minWidth: 200,
                 scale: 1,
                 scaleMobile: 1,
-                color: 0x0
+                color: isDarkMode ? 0x0 : 0xffffff
               })
             }
           }, 200)
@@ -546,11 +41,553 @@ export default function Home() {
       }
     }
     loadVanta()
-  }, [])
+  }, [isDarkMode])
+
+  const STYLES = `
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    html, body { width: 100%; height: 100%; }
+    
+    body { 
+      font-family: 'Inter', sans-serif;
+      background: ${isDarkMode ? '#0a0a0a' : '#ffffff'};
+      color: ${isDarkMode ? '#fff' : '#000'};
+      overflow-x: hidden;
+      transition: background 0.3s, color 0.3s;
+    }
+    
+    h1, h2, h3 { font-family: 'Poppins', sans-serif; color: ${isDarkMode ? '#fff' : '#000'}; }
+    
+    #vanta-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+    
+    .wrapper {
+      position: relative;
+      z-index: 2;
+    }
+    
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      background: ${isDarkMode ? 'rgba(10, 10, 10, 0.95)' : 'rgba(255, 255, 255, 0.95)'};
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid ${isDarkMode ? 'rgba(100, 100, 100, 0.1)' : 'rgba(100, 100, 100, 0.2)'};
+      z-index: 50;
+      padding: 16px 20px;
+      transition: all 0.3s;
+    }
+    
+    .nav-content {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      font-size: 20px;
+      font-weight: 800;
+      cursor: pointer;
+      color: ${isDarkMode ? '#fff' : '#000'};
+      border: none;
+      background: none;
+      font-family: 'Poppins', sans-serif;
+    }
+    
+    .nav-links {
+      display: flex;
+      gap: 30px;
+      align-items: center;
+    }
+    
+    .nav-link {
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: ${isDarkMode ? '#ccc' : '#666'};
+      transition: all 0.3s;
+    }
+    
+    .nav-link:hover {
+      color: #ff6b9d;
+    }
+    
+    .theme-toggle {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      border: 2px solid #ff6b9d;
+      background: ${isDarkMode ? 'rgba(255, 107, 157, 0.1)' : 'rgba(255, 107, 157, 0.2)'};
+      color: #ff6b9d;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      transition: all 0.3s;
+    }
+    
+    .theme-toggle:hover {
+      background: ${isDarkMode ? 'rgba(255, 107, 157, 0.2)' : 'rgba(255, 107, 157, 0.3)'};
+      transform: scale(1.1);
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 80px;
+    }
+    
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+    
+    .hero-content h1 {
+      font-size: clamp(36px, 8vw, 72px);
+      line-height: 1.1;
+      margin-bottom: 20px;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+    
+    .hero-label {
+      font-size: 16px;
+      color: ${isDarkMode ? '#fff' : '#000'};
+      margin-bottom: 15px;
+      font-weight: 500;
+    }
+    
+    .hero-desc {
+      font-size: 16px;
+      color: ${isDarkMode ? '#ccc' : '#666'};
+      line-height: 1.7;
+      margin-bottom: 40px;
+    }
+    
+    .button-group {
+      display: flex;
+      gap: 15px;
+    }
+    
+    .btn {
+      padding: 12px 28px;
+      border: 2px solid #ff6b9d;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all 0.3s;
+      background: linear-gradient(135deg, #ff6b9d, #ff8fae);
+      color: #fff;
+      border-radius: 50px;
+    }
+    
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 40px rgba(255, 107, 157, 0.3);
+    }
+    
+    .btn-secondary {
+      background: transparent;
+      color: #ff6b9d;
+    }
+    
+    .btn-secondary:hover {
+      background: rgba(255, 107, 157, 0.1);
+    }
+    
+    .carousel-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .carousel-box {
+      position: relative;
+      width: 100%;
+      height: 400px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: ${isDarkMode ? 'rgba(50, 50, 60, 0.2)' : 'rgba(200, 200, 200, 0.2)'};
+      border: 1px solid ${isDarkMode ? 'rgba(255, 107, 157, 0.1)' : 'rgba(255, 107, 157, 0.2)'};
+    }
+    
+    .carousel-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      animation: fadeIn 0.5s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    .carousel-arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 50px;
+      height: 50px;
+      background: rgba(255, 107, 157, 0.2);
+      border: 2px solid #ff6b9d;
+      color: #ff6b9d;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      border-radius: 50%;
+      transition: all 0.3s;
+      z-index: 10;
+      user-select: none;
+    }
+    
+    .carousel-arrow:hover {
+      background: rgba(255, 107, 157, 0.4);
+      transform: translateY(-50%) scale(1.1);
+    }
+    
+    .carousel-arrow.prev {
+      left: 15px;
+    }
+    
+    .carousel-arrow.next {
+      right: 15px;
+    }
+    
+    .carousel-label {
+      text-align: center;
+      padding: 20px;
+      background: ${isDarkMode ? 'rgba(10, 10, 10, 0.5)' : 'rgba(255, 255, 255, 0.5)'};
+      font-size: 24px;
+      font-weight: 700;
+      border-radius: 8px;
+      color: ${isDarkMode ? '#fff' : '#000'};
+    }
+    
+    .section {
+      padding: 120px 0;
+      position: relative;
+    }
+    
+    .section h2 {
+      font-size: clamp(36px, 7vw, 64px);
+      margin-bottom: 50px;
+      font-weight: 900;
+      letter-spacing: -1px;
+    }
+    
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+    }
+    
+    .gallery-item {
+      aspect-ratio: 1;
+      background: ${isDarkMode ? 'rgba(50, 50, 60, 0.2)' : 'rgba(200, 200, 200, 0.2)'};
+      border: 1px solid ${isDarkMode ? 'rgba(255, 107, 157, 0.15)' : 'rgba(255, 107, 157, 0.2)'};
+      cursor: pointer;
+      overflow: hidden;
+      border-radius: 16px;
+      transition: all 0.5s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: ${isDarkMode ? '#fff' : '#000'};
+      backdrop-filter: blur(10px);
+    }
+    
+    .gallery-item:hover {
+      border-color: #ff6b9d;
+      transform: translateY(-15px);
+      box-shadow: 0 30px 60px rgba(255, 107, 157, 0.2);
+    }
+    
+    .pricing {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 30px;
+    }
+    
+    .price-card {
+      border: 1px solid ${isDarkMode ? 'rgba(255, 107, 157, 0.15)' : 'rgba(255, 107, 157, 0.2)'};
+      padding: 40px 30px;
+      background: ${isDarkMode ? 'rgba(50, 50, 60, 0.2)' : 'rgba(200, 200, 200, 0.2)'};
+      border-radius: 16px;
+      transition: all 0.5s ease;
+      backdrop-filter: blur(10px);
+    }
+    
+    .price-card:hover {
+      border-color: #ff6b9d;
+      transform: translateY(-15px);
+      box-shadow: 0 30px 60px rgba(255, 107, 157, 0.15);
+    }
+    
+    .price-card.highlight {
+      border-color: #ff6b9d;
+      background: rgba(255, 107, 157, 0.1);
+      transform: scale(1.02);
+    }
+    
+    .price-card h3 {
+      font-size: 24px;
+      margin-bottom: 10px;
+      font-weight: 700;
+    }
+    
+    .price-desc {
+      color: ${isDarkMode ? '#ccc' : '#666'};
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+    
+    .price {
+      font-size: 42px;
+      font-weight: 900;
+      margin: 20px 0;
+      color: #ff6b9d;
+    }
+    
+    .features-list {
+      text-align: left;
+      margin: 30px 0;
+      font-size: 14px;
+      line-height: 2.2;
+      color: ${isDarkMode ? '#ccc' : '#666'};
+    }
+    
+    .features-list li {
+      list-style: none;
+    }
+    
+    .contact-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      max-width: 700px;
+    }
+    
+    .contact-card {
+      border: 1px solid ${isDarkMode ? 'rgba(255, 107, 157, 0.15)' : 'rgba(255, 107, 157, 0.2)'};
+      padding: 40px 30px;
+      background: ${isDarkMode ? 'rgba(50, 50, 60, 0.2)' : 'rgba(200, 200, 200, 0.2)'};
+      border-radius: 16px;
+      backdrop-filter: blur(10px);
+      text-decoration: none;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    
+    .contact-card:hover {
+      border-color: #ff6b9d;
+      transform: translateY(-15px);
+      box-shadow: 0 30px 60px rgba(255, 107, 157, 0.15);
+    }
+    
+    .contact-icon {
+      font-size: 32px;
+      margin-bottom: 15px;
+    }
+    
+    .contact-label {
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #ff6b9d;
+      margin-bottom: 10px;
+    }
+    
+    .contact-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: ${isDarkMode ? '#fff' : '#000'};
+    }
+    
+    footer {
+      border-top: 1px solid ${isDarkMode ? 'rgba(255, 107, 157, 0.1)' : 'rgba(255, 107, 157, 0.2)'};
+      padding: 50px 0;
+      text-align: center;
+      font-size: 13px;
+      color: ${isDarkMode ? '#999' : '#666'};
+    }
+    
+    @media (max-width: 1024px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      
+      .carousel-box {
+        height: 300px;
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .nav {
+        padding: 12px 16px;
+      }
+      
+      .nav-links {
+        gap: 15px;
+      }
+      
+      .nav-link {
+        font-size: 11px;
+      }
+      
+      .hero {
+        padding-top: 70px;
+      }
+      
+      .container {
+        padding: 0 16px;
+      }
+      
+      .button-group {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .btn {
+        width: 100%;
+        padding: 11px 20px;
+        font-size: 12px;
+      }
+      
+      .carousel-box {
+        height: 220px;
+      }
+      
+      .carousel-arrow {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+      }
+      
+      .carousel-label {
+        font-size: 18px;
+        padding: 15px;
+      }
+      
+      .gallery {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      
+      .pricing {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+      
+      .price-card.highlight {
+        transform: scale(1);
+      }
+      
+      .section {
+        padding: 60px 0;
+      }
+      
+      .section h2 {
+        font-size: 32px;
+        margin-bottom: 30px;
+      }
+    }
+    
+    @media (max-width: 480px) {
+      .nav {
+        padding: 10px 12px;
+      }
+      
+      .logo {
+        font-size: 18px;
+      }
+      
+      .nav-links {
+        gap: 10px;
+      }
+      
+      .nav-link {
+        font-size: 10px;
+      }
+      
+      .theme-toggle {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+      }
+      
+      .hero-content h1 {
+        font-size: 28px;
+      }
+      
+      .hero-label {
+        font-size: 13px;
+      }
+      
+      .hero-desc {
+        font-size: 14px;
+      }
+      
+      .carousel-box {
+        height: 180px;
+      }
+      
+      .carousel-arrow {
+        width: 35px;
+        height: 35px;
+        font-size: 16px;
+      }
+      
+      .carousel-label {
+        font-size: 16px;
+      }
+      
+      .section h2 {
+        font-size: 26px;
+      }
+      
+      .contact-cards {
+        grid-template-columns: 1fr;
+      }
+    }
+  `
 
   const navItems = [
     { id: 'home', label: 'Accueil' },
-    { id: 'portfolio', label: 'Portfolio' },
     { id: 'tarifs', label: 'Tarifs' },
     { id: 'contact', label: 'Contact' }
   ]
@@ -611,6 +648,13 @@ export default function Home() {
                   {item.label}
                 </button>
               ))}
+              <button 
+                className="theme-toggle"
+                onClick={() => setIsDarkMode(!isDarkMode)}
+                title={isDarkMode ? 'Mode clair' : 'Mode sombre'}
+              >
+                {isDarkMode ? '☀️' : '🌙'}
+              </button>
             </div>
           </div>
         </nav>
@@ -637,8 +681,8 @@ export default function Home() {
                     Des sites web modernes et performants avec un design créatif. Nous transformons vos idées en expériences numériques inoubliables.
                   </motion.p>
                   <motion.div variants={itemVariants} className="button-group">
-                    <button className="btn" onClick={() => setCurrentPage('portfolio')}>
-                      Voir nos projets
+                    <button className="btn" onClick={() => setCurrentPage('tarifs')}>
+                      Voir nos tarifs
                     </button>
                     <button className="btn btn-secondary" onClick={() => setCurrentPage('contact')}>
                       Obtenir un devis
@@ -765,30 +809,34 @@ export default function Home() {
             <div className="container">
               <div className="section">
                 <motion.h2 variants={itemVariants} initial="hidden" animate="visible">
-                  Parlons de votre projet
+                  Nous Contacter
                 </motion.h2>
-                <motion.form
-                  className="contact-form"
+                <motion.div
+                  className="contact-cards"
                   variants={containerVariants}
                   initial="hidden"
                   animate="visible"
                 >
-                  <motion.div className="form-group" variants={itemVariants}>
-                    <label>Nom complet</label>
-                    <input type="text" placeholder="Jean Dupont" />
-                  </motion.div>
-                  <motion.div className="form-group" variants={itemVariants}>
-                    <label>Email</label>
-                    <input type="email" placeholder="vous@email.com" />
-                  </motion.div>
-                  <motion.div className="form-group" variants={itemVariants}>
-                    <label>Décrivez votre projet</label>
-                    <textarea placeholder="Parlez-nous de votre vision..."></textarea>
-                  </motion.div>
-                  <motion.button type="submit" className="btn" style={{ width: '100%' }} variants={itemVariants}>
-                    Envoyer
-                  </motion.button>
-                </motion.form>
+                  <motion.a 
+                    href="mailto:contact@judev.store"
+                    className="contact-card"
+                    variants={itemVariants}
+                  >
+                    <div className="contact-icon">📧</div>
+                    <div className="contact-label">Email</div>
+                    <div className="contact-value">contact@judev.store</div>
+                  </motion.a>
+
+                  <motion.a 
+                    href="tel:+33612345678"
+                    className="contact-card"
+                    variants={itemVariants}
+                  >
+                    <div className="contact-icon">📱</div>
+                    <div className="contact-label">Téléphone</div>
+                    <div className="contact-value">+33 6 12 34 56 78</div>
+                  </motion.a>
+                </motion.div>
               </div>
             </div>
           </motion.div>
