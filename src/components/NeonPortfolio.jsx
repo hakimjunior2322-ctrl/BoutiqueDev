@@ -16,17 +16,23 @@ export default function NeonPortfolio() {
   ])
   const [chatInput, setChatInput] = useState('')
 
-  const [contactFormName, setContactFormName] = useState('')
-  const [contactFormEmail, setContactFormEmail] = useState('')
-  const [contactFormMessage, setContactFormMessage] = useState('')
+  // ✅ UN SEUL STATE OBJECT pour le formulaire de contact (comme BoutiquesPage)
+  const [contactFormData, setContactFormData] = useState({
+    name: '',
+    email: '',
+    message: '',
+  })
   const [contactSubmitting, setContactSubmitting] = useState(false)
   const [contactSuccess, setContactSuccess] = useState('')
 
-  const [avisFormName, setAvisFormName] = useState('')
-  const [avisFormBusiness, setAvisFormBusiness] = useState('')
-  const [avisFormEmail, setAvisFormEmail] = useState('')
-  const [avisFormText, setAvisFormText] = useState('')
-  const [avisFormRating, setAvisFormRating] = useState(5)
+  // ✅ UN SEUL STATE OBJECT pour le formulaire d'avis
+  const [avisFormData, setAvisFormData] = useState({
+    name: '',
+    business: '',
+    email: '',
+    text: '',
+    rating: 5,
+  })
   const [avisSubmitting, setAvisSubmitting] = useState(false)
   const [avisSuccess, setAvisSuccess] = useState('')
 
@@ -124,22 +130,20 @@ export default function NeonPortfolio() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: contactFormName,
-          email: contactFormEmail,
+          name: contactFormData.name,
+          email: contactFormData.email,
           phone: '',
           company: '',
           budget: 0,
           project_type: 'consultation',
-          message: contactFormMessage,
+          message: contactFormData.message,
           status: 'new'
         })
       })
 
       if (res.ok) {
         setContactSuccess('✓ Message reçu ! Nous vous répondrons dans les 24-48h.')
-        setContactFormName('')
-        setContactFormEmail('')
-        setContactFormMessage('')
+        setContactFormData({ name: '', email: '', message: '' })
         setTimeout(() => setContactSuccess(''), 5000)
       }
     } catch (error) {
@@ -159,22 +163,18 @@ export default function NeonPortfolio() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: avisFormName,
-          business: avisFormBusiness,
-          email: avisFormEmail,
-          text: avisFormText,
-          rating: avisFormRating,
+          name: avisFormData.name,
+          business: avisFormData.business,
+          email: avisFormData.email,
+          text: avisFormData.text,
+          rating: avisFormData.rating,
           status: 'pending'
         })
       })
 
       if (res.ok) {
         setAvisSuccess('✓ Merci pour votre avis ! Il sera publié après validation.')
-        setAvisFormName('')
-        setAvisFormBusiness('')
-        setAvisFormEmail('')
-        setAvisFormText('')
-        setAvisFormRating(5)
+        setAvisFormData({ name: '', business: '', email: '', text: '', rating: 5 })
         setShowAvisForm(false)
         setTimeout(() => setAvisSuccess(''), 5000)
       }
@@ -317,11 +317,11 @@ export default function NeonPortfolio() {
         </div>
 
         {showAvisForm && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="mb-12 bg-gradient-to-br from-pink-950/20 to-purple-950/20 border border-pink-500/20 rounded-xl p-6 md:p-12">
+          <div className="mb-12 bg-gradient-to-br from-pink-950/20 to-purple-950/20 border border-pink-500/20 rounded-xl p-6 md:p-12">
             {avisSuccess && (
-              <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 p-4 bg-green-500/20 border border-green-500 text-green-400 rounded-lg text-center font-semibold">
+              <div className="mb-6 p-4 bg-green-500/20 border border-green-500 text-green-400 rounded-lg text-center font-semibold">
                 {avisSuccess}
-              </motion.div>
+              </div>
             )}
 
             <form onSubmit={handleAvisSubmit} className="space-y-6">
@@ -330,8 +330,8 @@ export default function NeonPortfolio() {
                 <input 
                   type="text" 
                   placeholder="Jean Dupont" 
-                  value={avisFormName} 
-                  onChange={(e) => setAvisFormName(e.target.value)} 
+                  value={avisFormData.name} 
+                  onChange={(e) => setAvisFormData({ ...avisFormData, name: e.target.value })}
                   className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 transition" 
                   required 
                 />
@@ -342,8 +342,8 @@ export default function NeonPortfolio() {
                 <input 
                   type="text" 
                   placeholder="Ex: Agence web, E-commerce, Startup..." 
-                  value={avisFormBusiness} 
-                  onChange={(e) => setAvisFormBusiness(e.target.value)} 
+                  value={avisFormData.business} 
+                  onChange={(e) => setAvisFormData({ ...avisFormData, business: e.target.value })}
                   className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 transition" 
                 />
               </div>
@@ -353,8 +353,8 @@ export default function NeonPortfolio() {
                 <input 
                   type="email" 
                   placeholder="votre@email.com" 
-                  value={avisFormEmail} 
-                  onChange={(e) => setAvisFormEmail(e.target.value)} 
+                  value={avisFormData.email} 
+                  onChange={(e) => setAvisFormData({ ...avisFormData, email: e.target.value })}
                   className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 transition" 
                   required 
                 />
@@ -369,14 +369,14 @@ export default function NeonPortfolio() {
                       type="button"
                       whileHover={{ scale: 1.2 }}
                       whileTap={{ scale: 0.9 }}
-                      onClick={() => setAvisFormRating(star)}
-                      className={`text-5xl transition-all ${star <= avisFormRating ? 'text-yellow-400' : 'text-gray-500'}`}
+                      onClick={() => setAvisFormData({ ...avisFormData, rating: star })}
+                      className={`text-5xl transition-all ${star <= avisFormData.rating ? 'text-yellow-400' : 'text-gray-500'}`}
                     >
                       ⭐
                     </motion.button>
                   ))}
                 </div>
-                <p className="text-gray-400 text-sm mt-3">{avisFormRating} sur 5 ⭐</p>
+                <p className="text-gray-400 text-sm mt-3">{avisFormData.rating} sur 5 ⭐</p>
               </div>
 
               <div>
@@ -384,8 +384,8 @@ export default function NeonPortfolio() {
                 <textarea 
                   placeholder="Partagez votre expérience. Qu'avez-vous particulièrement aimé ? Comment nous avons pu vous aider ?" 
                   rows="6" 
-                  value={avisFormText} 
-                  onChange={(e) => setAvisFormText(e.target.value)} 
+                  value={avisFormData.text} 
+                  onChange={(e) => setAvisFormData({ ...avisFormData, text: e.target.value })}
                   className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 transition resize-none" 
                   required 
                 />
@@ -405,7 +405,7 @@ export default function NeonPortfolio() {
             <p className="text-gray-400 text-sm text-center mt-8">
               Les avis sont modérés avant publication pour garantir la qualité. Merci de votre compréhension !
             </p>
-          </motion.div>
+          </div>
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8">
@@ -530,7 +530,7 @@ export default function NeonPortfolio() {
           </div>
         </div>
         {showChat && (
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-gradient-to-br from-blue-950/30 to-cyan-950/30 border border-blue-500/30 rounded-xl p-4 md:p-6 mb-8">
+          <div className="bg-gradient-to-br from-blue-950/30 to-cyan-950/30 border border-blue-500/30 rounded-xl p-4 md:p-6 mb-8">
             <div className="space-y-4 max-h-96 overflow-y-auto mb-4">
               {chatMessages.map((msg) => (
                 <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -546,28 +546,28 @@ export default function NeonPortfolio() {
                 Envoyer
               </motion.button>
             </div>
-          </motion.div>
+          </div>
         )}
         <div className="bg-gradient-to-br from-pink-950/20 to-purple-950/20 border border-pink-500/20 rounded-xl p-6 md:p-12">
           {contactSuccess && (
-            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 p-4 bg-green-500/20 border border-green-500 text-green-400 rounded-lg text-center font-semibold">
+            <div className="mb-6 p-4 bg-green-500/20 border border-green-500 text-green-400 rounded-lg text-center font-semibold">
               {contactSuccess}
-            </motion.div>
+            </div>
           )}
           <form onSubmit={handleContactSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-white font-semibold mb-2">Nom</label>
-                <input type="text" placeholder="Ton nom" value={contactFormName} onChange={(e) => setContactFormName(e.target.value)} className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 transition" required />
+                <input type="text" placeholder="Ton nom" value={contactFormData.name} onChange={(e) => setContactFormData({ ...contactFormData, name: e.target.value })} className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 transition" required />
               </div>
               <div>
                 <label className="block text-white font-semibold mb-2">Email</label>
-                <input type="email" placeholder="tonemail@example.com" value={contactFormEmail} onChange={(e) => setContactFormEmail(e.target.value)} className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 transition" required />
+                <input type="email" placeholder="tonemail@example.com" value={contactFormData.email} onChange={(e) => setContactFormData({ ...contactFormData, email: e.target.value })} className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 transition" required />
               </div>
             </div>
             <div>
               <label className="block text-white font-semibold mb-2">Message</label>
-              <textarea placeholder="Décris ton projet en détail..." rows="6" value={contactFormMessage} onChange={(e) => setContactFormMessage(e.target.value)} className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 transition resize-none" required />
+              <textarea placeholder="Décris ton projet en détail..." rows="6" value={contactFormData.message} onChange={(e) => setContactFormData({ ...contactFormData, message: e.target.value })} className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-pink-500 transition resize-none" required />
             </div>
             <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} type="submit" disabled={contactSubmitting} className="w-full py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg font-semibold hover:from-pink-600 hover:to-purple-600 transition disabled:opacity-50">
               {contactSubmitting ? 'Envoi...' : 'Envoyer mon message'}
