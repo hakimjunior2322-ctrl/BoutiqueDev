@@ -556,9 +556,9 @@ export default function Home() {
   ]
 
   const carouselImages = [
-    'https://images.pexels.com/photos/3761681/pexels-photo-3761681.jpeg?w=800&h=600&fit=crop',
-    'https://images.pexels.com/photos/3807517/pexels-photo-3807517.jpeg?w=800&h=600&fit=crop',
-    'https://images.pexels.com/photos/3962286/pexels-photo-3962286.jpeg?w=800&h=600&fit=crop'
+    'https://i.imgur.com/fXJwB5B.jpeg',
+    'https://i.imgur.com/fXJwB5B.jpeg',
+    'https://i.imgur.com/fXJwB5B.jpeg'
   ]
 
   const nextSlide = () => {
