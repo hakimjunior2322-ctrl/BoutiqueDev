@@ -1,7 +1,6 @@
 {
-  "name": "judev-portfolio",
+  "name": "boutique-dev",
   "version": "1.0.0",
-  "description": "JuDev - Portfolio créatif",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -20,7 +19,12 @@
     "framer-motion": "^10.16.4",
     "tailwindcss": "^3.3.0",
     "autoprefixer": "^10.4.14",
-    "postcss": "^8.4.24"
+    "postcss": "^8.4.24",
+    "pg": "^8.10.0",
+    "jsonwebtoken": "^9.0.0",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.0.3",
+    "axios": "^1.4.0"
   },
   "devDependencies": {
     "eslint": "^8.48.0",
