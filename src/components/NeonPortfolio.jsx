@@ -110,6 +110,25 @@ const STYLES = `
   ::-webkit-scrollbar-thumb { background: var(--green); border-radius: 4px; }
   ::selection { background: rgba(0,255,65,0.2); }
   
+  /* AVATAR CHARACTER */
+  .avatar-character {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: rgba(0,255,65,0.1);
+    border: 2px solid rgba(0,255,65,0.3);
+    flex-shrink: 0;
+  }
+  
+  .avatar-character svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 0 8px rgba(0,255,65,0.3));
+  }
+  
   /* RESPONSIVE IMPROVEMENTS */
   @media (max-width: 768px) {
     .font-bebas { font-size: max(1.2rem, 6vw) !important; }
@@ -206,6 +225,50 @@ function LiveClock() {
       <div>{date}</div>
       <div>{day}</div>
     </div>
+  )
+}
+
+/* AVATAR CHARACTER COMPONENT */
+function AvatarCharacter() {
+  return (
+    <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+      {/* Head */}
+      <circle cx="50" cy="45" r="32" fill="#f0f0f0" stroke="#000" strokeWidth="2" />
+      <defs>
+        <radialGradient id="headGrad" cx="40%" cy="40%">
+          <stop offset="0%" style={{ stopColor: '#ffffff', stopOpacity: 0.6 }} />
+          <stop offset="100%" style={{ stopColor: '#d0d0d0', stopOpacity: 0.9 }} />
+        </radialGradient>
+      </defs>
+      <circle cx="50" cy="45" r="32" fill="url(#headGrad)" />
+      
+      {/* Left Eye */}
+      <ellipse cx="38" cy="38" rx="4" ry="6" fill="#000" />
+      
+      {/* Right Eye */}
+      <ellipse cx="62" cy="38" rx="4" ry="6" fill="#000" />
+      
+      {/* Left Eyebrow */}
+      <path d="M 33 30 Q 38 27 43 29" stroke="#000" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+      
+      {/* Right Eyebrow */}
+      <path d="M 57 29 Q 62 27 67 30" stroke="#000" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+      
+      {/* Mouth */}
+      <path d="M 45 55 Q 50 60 55 55" stroke="#000" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+      
+      {/* Tongue */}
+      <ellipse cx="50" cy="63" rx="3" ry="4" fill="#ff8080" />
+      
+      {/* Left Blush */}
+      <ellipse cx="28" cy="50" rx="6" ry="4" fill="#ffb3b3" opacity="0.7" />
+      
+      {/* Right Blush */}
+      <ellipse cx="72" cy="50" rx="6" ry="4" fill="#ffb3b3" opacity="0.7" />
+      
+      {/* Smile curve */}
+      <path d="M 40 53 Q 50 58 60 53" stroke="#000" strokeWidth="2" fill="none" strokeLinecap="round" />
+    </svg>
   )
 }
 
@@ -528,20 +591,9 @@ export default function JuDevCyber() {
               ) : avis.map((testimonial, i) => (
                 <motion.div key={testimonial.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }} as={TiltCard} className="p-6 md:p-8 rounded-lg" style={{ background: 'rgba(6,12,20,0.8)', border: '1px solid rgba(0,255,65,0.1)' }}>
                   <div className="flex items-start gap-4 mb-4">
-                    <svg width="48" height="48" viewBox="0 0 48 48" style={{ flexShrink: 0 }}>
-                      <defs>
-                        <linearGradient id="avatarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-                          <stop offset="0%" style={{ stopColor: '#00ff41', stopOpacity: 0.25 }} />
-                          <stop offset="100%" style={{ stopColor: '#ffb347', stopOpacity: 0.25 }} />
-                        </linearGradient>
-                      </defs>
-                      {/* Fond */}
-                      <circle cx="24" cy="24" r="24" fill="url(#avatarGrad)" stroke="rgba(0,255,65,0.3)" strokeWidth="1" />
-                      {/* Tête silhouette */}
-                      <circle cx="24" cy="15" r="7" fill="rgba(0,255,65,0.5)" />
-                      {/* Corps silhouette */}
-                      <path d="M 16 26 Q 16 24 24 24 Q 32 24 32 26 L 32 34 Q 32 36 24 36 Q 16 36 16 34 Z" fill="rgba(0,255,65,0.4)" />
-                    </svg>
+                    <div className="avatar-character">
+                      <AvatarCharacter />
+                    </div>
                     <div className="flex-1">
                       <h3 className="text-lg font-bold text-white font-mono">{testimonial.name}</h3>
                       <p className="text-sm" style={{ color: 'rgba(232,232,234,0.4)' }}>{testimonial.role}</p>
