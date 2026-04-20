@@ -9,7 +9,6 @@ export default function DevisPage() {
   const [devis, setDevis] = useState([])
   const [loading, setLoading] = useState(true)
   const [filterStatus, setFilterStatus] = useState('new')
-  const [selectedDevis, setSelectedDevis] = useState(null)
 
   useEffect(() => {
     const token = localStorage.getItem('auth_token')
@@ -22,8 +21,7 @@ export default function DevisPage() {
 
   const fetchDevis = async () => {
     try {
-      const url = filterStatus ? `/api/devis?status=${filterStatus}` : '/api/devis'
-      const res = await fetch(url)
+      const res = await fetch(`/api/devis?status=${filterStatus}`)
       const data = await res.json()
       setDevis(data.data || [])
     } catch (error) {
@@ -33,7 +31,7 @@ export default function DevisPage() {
     }
   }
 
-  const handleUpdateStatus = async (id, newStatus) => {
+  const updateStatus = async (id, newStatus) => {
     try {
       const devisItem = devis.find(d => d.id === id)
       const res = await fetch('/api/devis', {
@@ -44,7 +42,6 @@ export default function DevisPage() {
 
       if (res.ok) {
         fetchDevis()
-        setSelectedDevis(null)
       }
     } catch (error) {
       console.error('Error updating devis:', error)
@@ -63,47 +60,44 @@ export default function DevisPage() {
 
       if (res.ok) {
         fetchDevis()
-        setSelectedDevis(null)
       }
     } catch (error) {
       console.error('Error deleting devis:', error)
     }
   }
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'new':
-        return 'bg-yellow-500/20 border-yellow-500 text-yellow-400'
-      case 'contacted':
-        return 'bg-blue-500/20 border-blue-500 text-blue-400'
-      case 'quoted':
-        return 'bg-purple-500/20 border-purple-500 text-purple-400'
-      case 'closed':
-        return 'bg-green-500/20 border-green-500 text-green-400'
-      default:
-        return 'bg-gray-500/20 border-gray-500 text-gray-400'
-    }
-  }
+  const statuses = ['new', 'contacted', 'quoted', 'closed']
 
   return (
     <div className="min-h-screen bg-black">
+      {/* ← BOUTON RETOUR */}
+      <button
+        onClick={() => router.back()}
+        className="fixed top-6 left-6 z-50 px-4 py-2 bg-cyan-400/20 border border-cyan-400 text-cyan-400 rounded-lg hover:bg-cyan-400/30 transition"
+      >
+        ← Retour
+      </button>
+
       {/* Header */}
-      <div className="bg-black border-b border-green-500/20 sticky top-0 z-10">
+      <div className="bg-black border-b border-yellow-500/20 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-6 py-4">
-          <h1 className="text-2xl font-black text-white mb-4">Demandes de Devis</h1>
-          <div className="flex gap-2 overflow-x-auto">
-            {['new', 'contacted', 'quoted', 'closed'].map(status => (
+          <h1 className="text-2xl font-black text-white mb-4">Gestion des Devis</h1>
+          <div className="flex gap-2 overflow-x-auto pb-2">
+            {statuses.map(status => (
               <motion.button
                 key={status}
                 whileHover={{ scale: 1.05 }}
                 onClick={() => setFilterStatus(status)}
                 className={`px-4 py-2 rounded-lg transition whitespace-nowrap ${
                   filterStatus === status
-                    ? 'bg-green-500/30 border border-green-500 text-green-400'
-                    : 'bg-gray-500/10 border border-gray-500/30 text-gray-400 hover:border-green-500/50'
+                    ? 'bg-yellow-500/30 border border-yellow-500 text-yellow-400'
+                    : 'bg-gray-500/10 border border-gray-500/30 text-gray-400 hover:border-yellow-500/50'
                 }`}
               >
-                {status === 'new' ? 'Nouveau' : status === 'contacted' ? 'Contacté' : status === 'quoted' ? 'Devisé' : 'Fermé'}
+                {status === 'new' && 'Nouveaux'}
+                {status === 'contacted' && 'Contactés'}
+                {status === 'quoted' && 'Devis envoyés'}
+                {status === 'closed' && 'Fermés'}
               </motion.button>
             ))}
           </div>
@@ -117,122 +111,63 @@ export default function DevisPage() {
             <p className="text-gray-400">Chargement...</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* List */}
-            <div className="lg:col-span-2 space-y-4">
-              {devis.map((item, i) => (
-                <motion.div
-                  key={item.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.05 }}
-                  onClick={() => setSelectedDevis(item)}
-                  className={`bg-gradient-to-br from-green-950/20 to-emerald-950/20 border rounded-xl p-6 cursor-pointer hover:border-green-500/50 transition ${
-                    selectedDevis?.id === item.id
-                      ? 'border-green-500/50 bg-green-950/30'
-                      : 'border-green-500/20'
-                  }`}
-                >
-                  <div className="flex justify-between items-start mb-3">
-                    <div>
-                      <h3 className="text-lg font-bold text-white">{item.name}</h3>
-                      <p className="text-gray-400 text-sm">{item.email}</p>
-                    </div>
-                    <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${getStatusColor(item.status)}`}>
-                      {item.status}
-                    </span>
-                  </div>
-                  {item.company && (
-                    <p className="text-gray-400 text-sm mb-2">Entreprise: {item.company}</p>
-                  )}
-                  <p className="text-gray-400 text-xs">
-                    {new Date(item.created_at).toLocaleDateString('fr-FR')}
-                  </p>
-                </motion.div>
-              ))}
-
-              {devis.length === 0 && (
-                <div className="text-center py-12">
-                  <p className="text-gray-400">Aucun devis</p>
-                </div>
-              )}
-            </div>
-
-            {/* Detail */}
-            {selectedDevis && (
+          <div className="space-y-6">
+            {devis.map((item, i) => (
               <motion.div
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="bg-gradient-to-br from-green-950/20 to-emerald-950/20 border border-green-500/30 rounded-xl p-6 sticky top-24"
+                key={item.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: i * 0.05 }}
+                className="bg-gradient-to-br from-yellow-950/20 to-orange-950/20 border border-yellow-500/20 rounded-xl p-6 hover:border-yellow-500/50 transition"
               >
-                <h2 className="text-2xl font-bold text-white mb-4">Détails</h2>
-
-                <div className="space-y-4 text-sm">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   <div>
-                    <p className="text-gray-500 mb-1">Nom</p>
-                    <p className="text-white">{selectedDevis.name}</p>
+                    <h3 className="text-xl font-bold text-white mb-4">{item.name}</h3>
+                    <div className="space-y-2 text-gray-300">
+                      <p><span className="text-yellow-400">Email:</span> {item.email}</p>
+                      <p><span className="text-yellow-400">Téléphone:</span> {item.phone}</p>
+                      <p><span className="text-yellow-400">Entreprise:</span> {item.company}</p>
+                      <p><span className="text-yellow-400">Budget:</span> {item.budget}€</p>
+                      <p><span className="text-yellow-400">Type:</span> {item.project_type}</p>
+                    </div>
                   </div>
                   <div>
-                    <p className="text-gray-500 mb-1">Email</p>
-                    <p className="text-white break-all">{selectedDevis.email}</p>
+                    <p className="text-gray-300 mb-4"><span className="text-yellow-400">Message:</span></p>
+                    <p className="text-gray-300 italic bg-black/40 p-4 rounded-lg">{item.message}</p>
                   </div>
-                  {selectedDevis.phone && (
-                    <div>
-                      <p className="text-gray-500 mb-1">Téléphone</p>
-                      <p className="text-white">{selectedDevis.phone}</p>
-                    </div>
-                  )}
-                  {selectedDevis.company && (
-                    <div>
-                      <p className="text-gray-500 mb-1">Entreprise</p>
-                      <p className="text-white">{selectedDevis.company}</p>
-                    </div>
-                  )}
-                  {selectedDevis.budget && (
-                    <div>
-                      <p className="text-gray-500 mb-1">Budget</p>
-                      <p className="text-white">{selectedDevis.budget}€</p>
-                    </div>
-                  )}
-                  {selectedDevis.message && (
-                    <div>
-                      <p className="text-gray-500 mb-1">Message</p>
-                      <p className="text-white">{selectedDevis.message}</p>
-                    </div>
-                  )}
                 </div>
 
-                <div className="mt-6 space-y-2">
+                <div className="flex gap-2 flex-wrap">
+                  {statuses.map(status => (
+                    status !== filterStatus && (
+                      <motion.button
+                        key={status}
+                        whileHover={{ scale: 1.05 }}
+                        onClick={() => updateStatus(item.id, status)}
+                        className="px-3 py-2 bg-blue-500/20 border border-blue-500/50 text-blue-400 rounded-lg hover:bg-blue-500/30 text-sm transition"
+                      >
+                        → {status === 'new' && 'Nouveau'}
+                        {status === 'contacted' && 'Contacté'}
+                        {status === 'quoted' && 'Devis'}
+                        {status === 'closed' && 'Fermé'}
+                      </motion.button>
+                    )
+                  ))}
                   <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    onClick={() => handleUpdateStatus(selectedDevis.id, 'contacted')}
-                    className="w-full px-4 py-2 bg-blue-500/20 border border-blue-500/50 text-blue-400 rounded-lg hover:bg-blue-500/30 transition text-sm font-semibold"
-                  >
-                    Marquer Contacté
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    onClick={() => handleUpdateStatus(selectedDevis.id, 'quoted')}
-                    className="w-full px-4 py-2 bg-purple-500/20 border border-purple-500/50 text-purple-400 rounded-lg hover:bg-purple-500/30 transition text-sm font-semibold"
-                  >
-                    Marquer Devisé
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    onClick={() => handleUpdateStatus(selectedDevis.id, 'closed')}
-                    className="w-full px-4 py-2 bg-green-500/20 border border-green-500/50 text-green-400 rounded-lg hover:bg-green-500/30 transition text-sm font-semibold"
-                  >
-                    Marquer Fermé
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    onClick={() => handleDelete(selectedDevis.id)}
-                    className="w-full px-4 py-2 bg-red-500/20 border border-red-500/50 text-red-400 rounded-lg hover:bg-red-500/30 transition text-sm font-semibold"
+                    whileHover={{ scale: 1.05 }}
+                    onClick={() => handleDelete(item.id)}
+                    className="px-3 py-2 bg-red-500/20 border border-red-500/50 text-red-400 rounded-lg hover:bg-red-500/30 text-sm transition"
                   >
                     Supprimer
                   </motion.button>
                 </div>
               </motion.div>
+            ))}
+
+            {devis.length === 0 && (
+              <div className="text-center py-12">
+                <p className="text-gray-400">Aucun devis</p>
+              </div>
             )}
           </div>
         )}
