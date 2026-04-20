@@ -24,6 +24,17 @@ export default function NeonPortfolio() {
   const [contactSubmitting, setContactSubmitting] = useState(false)
   const [contactSuccess, setContactSuccess] = useState('')
 
+  // FORMULAIRE AVIS
+  const [avisForm, setAvisForm] = useState({
+    name: '',
+    business: '',
+    email: '',
+    text: '',
+    rating: 5
+  })
+  const [avisSubmitting, setAvisSubmitting] = useState(false)
+  const [avisSuccess, setAvisSuccess] = useState('')
+
   // DONNÉES DEPUIS BDD
   const [boutiques, setBoutiques] = useState([])
   const [avis, setAvis] = useState([])
@@ -123,6 +134,7 @@ export default function NeonPortfolio() {
     { id: 'judev', label: 'JuDev' },
     { id: 'avis', label: 'Avis' },
     { id: 'tarifs', label: 'Tarifs' },
+    { id: 'leave-avis', label: 'Votre avis' },
     { id: 'contact', label: 'Contact' },
   ]
 
@@ -169,6 +181,37 @@ export default function NeonPortfolio() {
     }
   }
 
+  const handleAvisSubmit = async (e) => {
+    e.preventDefault()
+    setAvisSubmitting(true)
+    
+    try {
+      const res = await fetch('/api/avis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: avisForm.name,
+          business: avisForm.business,
+          email: avisForm.email,
+          text: avisForm.text,
+          rating: avisForm.rating,
+          status: 'pending'
+        })
+      })
+
+      if (res.ok) {
+        setAvisSuccess('✓ Merci pour votre avis ! Il sera publié après validation.')
+        setAvisForm({ name: '', business: '', email: '', text: '', rating: 5 })
+        setTimeout(() => setAvisSuccess(''), 5000)
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      setAvisSuccess('❌ Erreur lors de l\'envoi')
+    } finally {
+      setAvisSubmitting(false)
+    }
+  }
+
   if (showSplash) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-gray-950 via-purple-950 to-gray-950 overflow-hidden">
@@ -203,7 +246,7 @@ export default function NeonPortfolio() {
             ))}
           </div>
           <div className="lg:hidden flex gap-1 overflow-x-auto">
-            {navItems.slice(0, 4).map((item) => (
+            {navItems.slice(0, 5).map((item) => (
               <button key={item.id} onClick={() => setCurrentPage(item.id)} className={`px-2 py-1 text-xs font-semibold rounded transition-all flex-shrink-0 ${currentPage === item.id ? 'bg-pink-500/30 text-pink-300' : 'text-gray-400'}`}>
                 {item.label.split(' ')[0]}
               </button>
@@ -357,6 +400,115 @@ export default function NeonPortfolio() {
     </motion.div>
   )
 
+  const LeaveAvisPage = () => (
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen pt-20 md:pt-32 pb-16 md:pb-20 bg-black flex items-center justify-center">
+      <div className="max-w-4xl mx-auto px-4 md:px-6 w-full">
+        <h2 className="text-5xl md:text-7xl font-black mb-4">
+          <span className="block text-white">LAISSEZ</span>
+          <span className="bg-gradient-to-r from-pink-400 to-purple-400 bg-clip-text text-transparent">VOTRE AVIS</span>
+        </h2>
+        <p className="text-gray-400 text-lg md:text-xl mb-12">Partagez votre expérience avec nous</p>
+
+        <div className="bg-gradient-to-br from-pink-950/20 to-purple-950/20 border border-pink-500/20 rounded-xl p-6 md:p-12">
+          {avisSuccess && (
+            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 p-4 bg-green-500/20 border border-green-500 text-green-400 rounded-lg text-center font-semibold">
+              {avisSuccess}
+            </motion.div>
+          )}
+
+          <form onSubmit={handleAvisSubmit} className="space-y-6">
+            {/* NOM */}
+            <div>
+              <label className="block text-white font-semibold mb-2">Votre nom *</label>
+              <input 
+                type="text" 
+                placeholder="Jean Dupont" 
+                value={avisForm.name} 
+                onChange={(e) => setAvisForm({...avisForm, name: e.target.value})} 
+                className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-pink-500 transition" 
+                required 
+              />
+            </div>
+
+            {/* ENTREPRISE */}
+            <div>
+              <label className="block text-white font-semibold mb-2">Votre entreprise / Secteur</label>
+              <input 
+                type="text" 
+                placeholder="Ex: Agence web, E-commerce, Startup..." 
+                value={avisForm.business} 
+                onChange={(e) => setAvisForm({...avisForm, business: e.target.value})} 
+                className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-pink-500 transition" 
+              />
+            </div>
+
+            {/* EMAIL */}
+            <div>
+              <label className="block text-white font-semibold mb-2">Email *</label>
+              <input 
+                type="email" 
+                placeholder="votre@email.com" 
+                value={avisForm.email} 
+                onChange={(e) => setAvisForm({...avisForm, email: e.target.value})} 
+                className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-pink-500 transition" 
+                required 
+              />
+            </div>
+
+            {/* ÉTOILES */}
+            <div>
+              <label className="block text-white font-semibold mb-4">Votre note *</label>
+              <div className="flex gap-2">
+                {[1, 2, 3, 4, 5].map((star) => (
+                  <motion.button
+                    key={star}
+                    type="button"
+                    whileHover={{ scale: 1.2 }}
+                    whileTap={{ scale: 0.9 }}
+                    onClick={() => setAvisForm({...avisForm, rating: star})}
+                    className={`text-5xl transition-all ${
+                      star <= avisForm.rating ? 'text-yellow-400' : 'text-gray-500'
+                    }`}
+                  >
+                    ⭐
+                  </motion.button>
+                ))}
+              </div>
+              <p className="text-gray-400 text-sm mt-3">{avisForm.rating} sur 5 ⭐</p>
+            </div>
+
+            {/* TEXTE AVIS */}
+            <div>
+              <label className="block text-white font-semibold mb-2">Votre avis *</label>
+              <textarea 
+                placeholder="Partagez votre expérience. Qu'avez-vous particulièrement aimé ? Comment nous avons pu vous aider ?" 
+                rows="6" 
+                value={avisForm.text} 
+                onChange={(e) => setAvisForm({...avisForm, text: e.target.value})} 
+                className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-pink-500 transition resize-none" 
+                required 
+              />
+            </div>
+
+            <motion.button 
+              whileHover={{ scale: 1.05 }} 
+              whileTap={{ scale: 0.95 }} 
+              type="submit" 
+              disabled={avisSubmitting} 
+              className="w-full py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg font-semibold hover:from-pink-600 hover:to-purple-600 transition disabled:opacity-50"
+            >
+              {avisSubmitting ? 'Envoi...' : 'Publier mon avis'}
+            </motion.button>
+          </form>
+
+          <p className="text-gray-400 text-sm text-center mt-8">
+            Les avis sont modérés avant publication pour garantir la qualité. Merci de votre compréhension !
+          </p>
+        </div>
+      </div>
+    </motion.div>
+  )
+
   const FAQPage = () => (
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="min-h-screen pt-20 md:pt-32 pb-16 md:pb-20 bg-black">
       <div className="max-w-4xl mx-auto px-4 md:px-6">
@@ -461,6 +613,7 @@ export default function NeonPortfolio() {
       case 'home': return <HomePage />
       case 'judev': return <JuDevPage />
       case 'avis': return <AvisPage />
+      case 'leave-avis': return <LeaveAvisPage />
       case 'tarifs': return <TarifsPage />
       case 'contact': return <ContactPage />
       default: return <HomePage />
