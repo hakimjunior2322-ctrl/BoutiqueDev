@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS avis (
   text TEXT NOT NULL,
   rating INT CHECK (rating >= 1 AND rating <= 5),
   status VARCHAR(50) DEFAULT 'pending',
+  access_code VARCHAR(50),
   approved_at TIMESTAMP,
   created_at TIMESTAMP DEFAULT NOW()
 );
@@ -71,28 +72,37 @@ CREATE TABLE IF NOT EXISTS devis (
   updated_at TIMESTAMP DEFAULT NOW()
 );
 
+-- 6. TABLE: Chat Messages
+CREATE TABLE IF NOT EXISTS chat_messages (
+  id SERIAL PRIMARY KEY,
+  session_id VARCHAR(100) NOT NULL,
+  user_name VARCHAR(255),
+  message TEXT NOT NULL,
+  type VARCHAR(50) DEFAULT 'user',
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
 -- =====================================================
 -- INSERT DEFAULT DATA
 -- =====================================================
 
--- Insert admin user (username: admin, password: admin123)
-INSERT INTO users (username, password, email, role) VALUES 
-('admin', 'admin123', 'admin@judev.com', 'admin')
+INSERT INTO users (username, password, email, role) 
+VALUES ('admin', 'admin123', 'admin@judev.com', 'admin')
 ON CONFLICT DO NOTHING;
 
--- Default Pricing Plans
-INSERT INTO tarifs (name, price, description, features, highlighted, cta_text) VALUES
-('Starter', 499, 'Parfait pour débuter', '["5 pages max", "Design responsive", "SEO basique", "Support email", "SSL gratuit"]', FALSE, 'Démarrer'),
-('Pro', 999, 'Pour croître', '["Pages illimitées", "Design custom", "SEO avancé", "Support 24/7", "Analytics", "Intégrations"]', TRUE, 'Choisir'),
-('Enterprise', NULL, 'Pour grandes structures', '["Tout illimité", "Support dédié", "API custom", "Infrastructure privée", "SLA garanti"]', FALSE, 'Contacter')
+INSERT INTO tarifs (name, price, currency, period, description, features, highlighted, cta_text, status) 
+VALUES
+  ('Starter', 499, 'EUR', 'once', 'Parfait pour débuter', '5 pages max, Design responsive, SEO basique, Support email, SSL gratuit', FALSE, 'Démarrer', 'active'),
+  ('Pro', 999, 'EUR', 'once', 'Pour croître', 'Pages illimitées, Design custom, SEO avancé, Support 24/7, Analytics, Intégrations', TRUE, 'Choisir', 'active'),
+  ('Enterprise', NULL, 'EUR', 'custom', 'Pour grandes structures', 'Tout illimité, Support dédié, API custom, Infrastructure privée, SLA garanti', FALSE, 'Contacter', 'active')
 ON CONFLICT DO NOTHING;
 
--- Default Avis
-INSERT INTO avis (name, business, text, rating, status) VALUES
-('Karim D.', 'Fashion Boutique', 'JuDev a transformé ma présence en ligne. Ventes +150%!', 5, 'approved'),
-('Fatima M.', 'Restaurant Delice', 'Professionnel, réactif, résultats au rendez-vous.', 5, 'approved'),
-('Ahmed S.', 'Salon Excellence', 'Le site est magnifique et les clients adorent!', 5, 'approved'),
-('Zainab L.', 'Shop Electronique', 'Excellent rapport qualité-prix. Vraiment très satisfaite!', 4, 'approved')
+INSERT INTO avis (name, business, email, text, rating, status) 
+VALUES
+  ('Karim D.', 'Fashion Boutique', 'karim@example.com', 'JuDev a transformé ma présence en ligne. Ventes +150%!', 5, 'approved'),
+  ('Fatima M.', 'Restaurant Delice', 'fatima@example.com', 'Professionnel, réactif, résultats au rendez-vous.', 5, 'approved'),
+  ('Ahmed S.', 'Salon Excellence', 'ahmed@example.com', 'Le site est magnifique et les clients adorent!', 5, 'approved'),
+  ('Zainab L.', 'Shop Electronique', 'zainab@example.com', 'Excellent rapport qualité-prix. Vraiment très satisfaite!', 4, 'approved')
 ON CONFLICT DO NOTHING;
 
 -- =====================================================
@@ -105,7 +115,4 @@ CREATE INDEX IF NOT EXISTS idx_devis_status ON devis(status);
 CREATE INDEX IF NOT EXISTS idx_tarifs_status ON tarifs(status);
 CREATE INDEX IF NOT EXISTS idx_avis_created ON avis(created_at);
 CREATE INDEX IF NOT EXISTS idx_devis_created ON devis(created_at);
-
--- =====================================================
--- DONE!
--- =====================================================
+CREATE INDEX IF NOT EXISTS idx_chat_session ON chat_messages(session_id);
