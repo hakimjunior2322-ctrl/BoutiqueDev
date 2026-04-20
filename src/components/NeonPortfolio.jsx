@@ -2,6 +2,11 @@
 
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import { Swiper, SwiperSlide } from 'swiper/react'
+import { Navigation, Pagination } from 'swiper/modules'
+import 'swiper/css'
+import 'swiper/css/navigation'
+import 'swiper/css/pagination'
 
 const STYLES = `
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
@@ -193,18 +198,83 @@ const STYLES = `
     background: rgba(255, 107, 157, 0.1);
   }
   
-  .hero-visual {
-    position: relative;
-    height: 500px;
-    background: rgba(50, 50, 60, 0.2);
+  .boutiques-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .swiper-carousel {
+    width: 100%;
+    height: 400px;
     border-radius: 20px;
     border: 1px solid rgba(255, 107, 157, 0.1);
+    overflow: hidden;
+    background: rgba(50, 50, 60, 0.2);
+    backdrop-filter: blur(10px);
+  }
+  
+  .swiper {
+    width: 100%;
+    height: 100%;
+  }
+  
+  .swiper-slide {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #999;
-    font-size: 14px;
-    backdrop-filter: blur(10px);
+    width: 100%;
+    height: 100%;
+  }
+  
+  .slide-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .boutique-name-container {
+    text-align: center;
+    padding: 20px;
+    background: rgba(10, 10, 10, 0.5);
+  }
+  
+  .boutique-name {
+    font-size: clamp(18px, 4vw, 28px);
+    font-weight: 700;
+    color: #fff;
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  .swiper-button-next,
+  .swiper-button-prev {
+    color: #ff6b9d;
+    background: rgba(255, 107, 157, 0.15);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 107, 157, 0.3);
+    transition: all 0.3s ease;
+  }
+  
+  .swiper-button-next:hover,
+  .swiper-button-prev:hover {
+    background: rgba(255, 107, 157, 0.3);
+    border-color: #ff6b9d;
+  }
+  
+  .swiper-button-next:after,
+  .swiper-button-prev:after {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  
+  .swiper-pagination-bullet {
+    background: rgba(255, 107, 157, 0.4) !important;
+  }
+  
+  .swiper-pagination-bullet-active {
+    background: #ff6b9d !important;
   }
   
   .section {
@@ -375,8 +445,8 @@ const STYLES = `
       gap: 40px;
     }
     
-    .hero-visual {
-      height: 350px;
+    .swiper-carousel {
+      height: 300px;
     }
   }
   
@@ -407,6 +477,10 @@ const STYLES = `
       font-size: 12px;
     }
     
+    .swiper-carousel {
+      height: 250px;
+    }
+    
     .gallery {
       grid-template-columns: 1fr;
     }
@@ -421,19 +495,17 @@ const STYLES = `
   }
 `
 
-export default function JuDevVanta() {
+export default function Home() {
   const [currentPage, setCurrentPage] = useState('home')
 
   useEffect(() => {
     const loadVanta = async () => {
-      // Charger Three.js d'abord
       const three = document.createElement('script')
       three.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js'
       three.async = true
       document.head.appendChild(three)
 
       three.onload = () => {
-        // Charger Vanta après Three.js
         const vanta = document.createElement('script')
         vanta.src = 'https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.waves.min.js'
         vanta.async = true
@@ -467,6 +539,40 @@ export default function JuDevVanta() {
     { id: 'clients', label: 'Portfolio' },
     { id: 'tarifs', label: 'Tarifs' },
     { id: 'contact', label: 'Contact' }
+  ]
+
+  // DONNÉES DES BOUTIQUES - À MODIFIER AVEC TES BOUTIQUES
+  const boutiques = [
+    {
+      id: 1,
+      nom: 'Boutique Paris',
+      image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1000&h=800&fit=crop'
+    },
+    {
+      id: 2,
+      nom: 'Boutique Lyon',
+      image: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=1000&h=800&fit=crop'
+    },
+    {
+      id: 3,
+      nom: 'Boutique Marseille',
+      image: 'https://images.unsplash.com/photo-1522869635100-ce306e08c5ec?w=1000&h=800&fit=crop'
+    },
+    {
+      id: 4,
+      nom: 'Boutique Toulouse',
+      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1000&h=800&fit=crop'
+    },
+    {
+      id: 5,
+      nom: 'Boutique Nice',
+      image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1000&h=800&fit=crop'
+    },
+    {
+      id: 6,
+      nom: 'Boutique Bordeaux',
+      image: 'https://images.unsplash.com/photo-1570129477492-45acc003a6bb?w=1000&h=800&fit=crop'
+    }
   ]
 
   const containerVariants = {
@@ -545,11 +651,49 @@ export default function JuDevVanta() {
                     </button>
                   </motion.div>
                 </div>
+
+                {/* CAROUSEL BOUTIQUES */}
                 <motion.div 
-                  className="hero-visual"
+                  className="boutiques-container"
                   variants={itemVariants}
                 >
-                  Espace visuel
+                  <div className="swiper-carousel">
+                    <Swiper
+                      modules={[Navigation, Pagination]}
+                      navigation
+                      pagination={{ clickable: true }}
+                      loop={true}
+                      spaceBetween={0}
+                      slidesPerView={1}
+                    >
+                      {boutiques.map(boutique => (
+                        <SwiperSlide key={boutique.id}>
+                          <img 
+                            src={boutique.image} 
+                            alt={boutique.nom}
+                            className="slide-image"
+                          />
+                        </SwiperSlide>
+                      ))}
+                    </Swiper>
+                  </div>
+                  <div className="boutique-name-container">
+                    <Swiper
+                      modules={[Navigation, Pagination]}
+                      navigation={false}
+                      pagination={false}
+                      loop={true}
+                      spaceBetween={0}
+                      slidesPerView={1}
+                      onSlideChange={(swiper) => {}}
+                    >
+                      {boutiques.map(boutique => (
+                        <SwiperSlide key={boutique.id}>
+                          <div className="boutique-name">{boutique.nom}</div>
+                        </SwiperSlide>
+                      ))}
+                    </Swiper>
+                  </div>
                 </motion.div>
               </motion.div>
             </div>
