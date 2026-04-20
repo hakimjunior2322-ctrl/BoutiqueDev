@@ -29,6 +29,29 @@ export default function NeonPortfolio() {
   const [avis, setAvis] = useState([])
   const [tarifs, setTarifs] = useState([])
 
+  // FIX CLAVIER MOBILE
+  useEffect(() => {
+    const handleFocus = () => {
+      document.documentElement.style.overflow = 'hidden'
+    }
+    const handleBlur = () => {
+      document.documentElement.style.overflow = 'auto'
+    }
+    
+    const inputs = document.querySelectorAll('input, textarea')
+    inputs.forEach(input => {
+      input.addEventListener('focus', handleFocus)
+      input.addEventListener('blur', handleBlur)
+    })
+    
+    return () => {
+      inputs.forEach(input => {
+        input.removeEventListener('focus', handleFocus)
+        input.removeEventListener('blur', handleBlur)
+      })
+    }
+  }, [])
+
   useEffect(() => {
     const timer = setTimeout(() => setShowSplash(false), 3000)
     return () => clearTimeout(timer)
