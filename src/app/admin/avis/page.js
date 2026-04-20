@@ -8,7 +8,7 @@ export default function AvisPage() {
   const router = useRouter()
   const [avis, setAvis] = useState([])
   const [loading, setLoading] = useState(true)
-  const [filterStatus, setFilterStatus] = useState('pending')
+  const [filterStatus, setFilterStatus] = useState('approved')
 
   useEffect(() => {
     const token = localStorage.getItem('auth_token')
@@ -81,7 +81,7 @@ export default function AvisPage() {
         <div className="max-w-7xl mx-auto px-6 py-4">
           <h1 className="text-2xl font-black text-white mb-4">Gestion des Avis</h1>
           <div className="flex gap-2">
-            {['pending', 'approved'].map(status => (
+            {['approved', 'pending'].map(status => (
               <motion.button
                 key={status}
                 whileHover={{ scale: 1.05 }}
@@ -92,7 +92,7 @@ export default function AvisPage() {
                     : 'bg-gray-500/10 border border-gray-500/30 text-gray-400 hover:border-pink-500/50'
                 }`}
               >
-                {status === 'pending' ? 'En attente' : 'Approuvés'}
+                {status === 'approved' ? 'Approuvés' : 'En attente'}
               </motion.button>
             ))}
           </div>
