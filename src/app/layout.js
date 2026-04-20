@@ -1,9 +1,14 @@
 import './globals.css'
 
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  userScalable: 'yes',
+}
+
 export const metadata = {
   title: 'JuDev',
   description: 'Portfolio créatif',
-  viewport: 'width=device-width, initial-scale=1, user-scalable=yes',
 }
 
 export default function RootLayout({ children }) {
