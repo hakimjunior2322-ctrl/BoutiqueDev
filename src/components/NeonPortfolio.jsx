@@ -382,57 +382,34 @@ export default function Home() {
       list-style: none;
     }
     
-    .contact-cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 30px;
-      max-width: 700px;
+    .form-group {
+      margin-bottom: 20px;
     }
     
-    .contact-card {
-      border: 1px solid ${isDarkMode ? 'rgba(255, 107, 157, 0.15)' : 'rgba(255, 107, 157, 0.2)'};
-      padding: 40px 30px;
-      background: ${isDarkMode ? 'rgba(50, 50, 60, 0.2)' : 'rgba(200, 200, 200, 0.2)'};
-      border-radius: 16px;
-      backdrop-filter: blur(10px);
-      text-decoration: none;
-      transition: all 0.3s ease;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      font-size: 14px;
     }
     
-    .contact-card:hover {
-      border-color: #ff6b9d;
-      transform: translateY(-15px);
-      box-shadow: 0 30px 60px rgba(255, 107, 157, 0.15);
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ff6b9d;
+      background: ${isDarkMode ? 'rgba(50,50,60,0.5)' : '#f0f0f0'};
+      color: ${isDarkMode ? '#fff' : '#000'};
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
     }
 
-    .contact-card:focus {
-      outline: 2px solid #ff6b9d;
-      outline-offset: 2px;
-    }
-    
-    .contact-icon {
-      font-size: 32px;
-      margin-bottom: 15px;
-    }
-    
-    .contact-label {
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-      color: #ff6b9d;
-      margin-bottom: 10px;
-    }
-    
-    .contact-value {
-      font-size: 18px;
-      font-weight: 700;
-      color: ${isDarkMode ? '#fff' : '#000'};
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: #ff6b9d;
+      box-shadow: 0 0 10px rgba(255, 107, 157, 0.3);
     }
     
     footer {
@@ -571,10 +548,6 @@ export default function Home() {
       
       .section h2 {
         font-size: 26px;
-      }
-      
-      .contact-cards {
-        grid-template-columns: 1fr;
       }
     }
   `
@@ -790,36 +763,72 @@ export default function Home() {
             <div className="container">
               <div className="section">
                 <motion.h2 variants={itemVariants} initial="hidden" animate="visible">
-                  Nous Contacter
+                  Demande de Devis
                 </motion.h2>
-                <motion.div
-                  className="contact-cards"
+                <motion.form
+                  onSubmit={async (e) => {
+                    e.preventDefault()
+                    const formData = new FormData(e.target)
+                    const data = Object.fromEntries(formData)
+                    
+                    try {
+                      const response = await fetch('/send-email.php', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(data)
+                      })
+                      
+                      const result = await response.json()
+                      
+                      if (result.success) {
+                        alert('Demande envoyée! Nous vous contacterons bientôt.')
+                        e.target.reset()
+                        setCurrentPage('home')
+                      } else {
+                        alert('Erreur: ' + (result.error || 'Une erreur est survenue'))
+                      }
+                    } catch (error) {
+                      alert('Erreur: ' + error.message)
+                    }
+                  }}
+                  style={{ maxWidth: '500px', margin: '0 auto' }}
                   variants={containerVariants}
                   initial="hidden"
                   animate="visible"
                 >
-                  <motion.a 
-                    href="mailto:contact@judev.store"
-                    className="contact-card"
-                    variants={itemVariants}
-                    aria-label="Envoyer un email"
-                  >
-                    <div className="contact-icon">📧</div>
-                    <div className="contact-label">Email</div>
-                    <div className="contact-value">contact@judev.store</div>
-                  </motion.a>
+                  <motion.div className="form-group" variants={itemVariants}>
+                    <label>Nom</label>
+                    <input type="text" name="nom" required placeholder="Votre nom" />
+                  </motion.div>
 
-                  <motion.a 
-                    href="tel:+33612345678"
-                    className="contact-card"
-                    variants={itemVariants}
-                    aria-label="Appeler par téléphone"
-                  >
-                    <div className="contact-icon">📱</div>
-                    <div className="contact-label">Téléphone</div>
-                    <div className="contact-value">+33 6 12 34 56 78</div>
-                  </motion.a>
-                </motion.div>
+                  <motion.div className="form-group" variants={itemVariants}>
+                    <label>Prénom</label>
+                    <input type="text" name="prenom" required placeholder="Votre prénom" />
+                  </motion.div>
+
+                  <motion.div className="form-group" variants={itemVariants}>
+                    <label>Email</label>
+                    <input type="email" name="email" required placeholder="votre@email.com" />
+                  </motion.div>
+
+                  <motion.div className="form-group" variants={itemVariants}>
+                    <label>Téléphone</label>
+                    <input type="tel" name="telephone" required placeholder="+33 6 12 34 56 78" />
+                  </motion.div>
+
+                  <motion.div className="form-group" variants={itemVariants}>
+                    <label>Offre intéressée</label>
+                    <select name="offre" required>
+                      <option>Offre Essentiel (200€)</option>
+                      <option>Offre Professionnel (500€)</option>
+                      <option>Offre Entreprise (Devis)</option>
+                    </select>
+                  </motion.div>
+
+                  <motion.button type="submit" className="btn" style={{ width: '100%' }} variants={itemVariants}>
+                    Envoyer ma demande
+                  </motion.button>
+                </motion.form>
               </div>
             </div>
           </motion.div>
@@ -833,4 +842,3 @@ export default function Home() {
       </div>
     </>
   )
-}
