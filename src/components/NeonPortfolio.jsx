@@ -13,12 +13,14 @@ export default function Home() {
       const three = document.createElement('script')
       three.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js'
       three.async = true
+      three.crossOrigin = 'anonymous'
       document.head.appendChild(three)
 
       three.onload = () => {
         const vanta = document.createElement('script')
         vanta.src = 'https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.waves.min.js'
         vanta.async = true
+        vanta.crossOrigin = 'anonymous'
         document.head.appendChild(vanta)
 
         vanta.onload = () => {
@@ -103,6 +105,11 @@ export default function Home() {
       border: none;
       background: none;
       font-family: 'Poppins', sans-serif;
+      transition: all 0.3s;
+    }
+
+    .logo:hover {
+      color: #ff6b9d;
     }
     
     .nav-links {
@@ -143,6 +150,11 @@ export default function Home() {
     .theme-toggle:hover {
       background: ${isDarkMode ? 'rgba(255, 107, 157, 0.2)' : 'rgba(255, 107, 157, 0.3)'};
       transform: scale(1.1);
+    }
+
+    .theme-toggle:focus {
+      outline: 2px solid #ff6b9d;
+      outline-offset: 2px;
     }
     
     .container {
@@ -210,6 +222,11 @@ export default function Home() {
       transform: translateY(-3px);
       box-shadow: 0 15px 40px rgba(255, 107, 157, 0.3);
     }
+
+    .btn:focus {
+      outline: 2px solid #ff6b9d;
+      outline-offset: 2px;
+    }
     
     .btn-secondary {
       background: transparent;
@@ -272,6 +289,10 @@ export default function Home() {
       background: rgba(255, 107, 157, 0.4);
       transform: translateY(-50%) scale(1.1);
     }
+
+    .carousel-arrow:focus {
+      outline: 2px solid #ff6b9d;
+    }
     
     .carousel-arrow.prev {
       left: 15px;
@@ -301,34 +322,6 @@ export default function Home() {
       margin-bottom: 50px;
       font-weight: 900;
       letter-spacing: -1px;
-    }
-    
-    .gallery {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 30px;
-    }
-    
-    .gallery-item {
-      aspect-ratio: 1;
-      background: ${isDarkMode ? 'rgba(50, 50, 60, 0.2)' : 'rgba(200, 200, 200, 0.2)'};
-      border: 1px solid ${isDarkMode ? 'rgba(255, 107, 157, 0.15)' : 'rgba(255, 107, 157, 0.2)'};
-      cursor: pointer;
-      overflow: hidden;
-      border-radius: 16px;
-      transition: all 0.5s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
-      color: ${isDarkMode ? '#fff' : '#000'};
-      backdrop-filter: blur(10px);
-    }
-    
-    .gallery-item:hover {
-      border-color: #ff6b9d;
-      transform: translateY(-15px);
-      box-shadow: 0 30px 60px rgba(255, 107, 157, 0.2);
     }
     
     .pricing {
@@ -416,6 +409,11 @@ export default function Home() {
       transform: translateY(-15px);
       box-shadow: 0 30px 60px rgba(255, 107, 157, 0.15);
     }
+
+    .contact-card:focus {
+      outline: 2px solid #ff6b9d;
+      outline-offset: 2px;
+    }
     
     .contact-icon {
       font-size: 32px;
@@ -501,11 +499,6 @@ export default function Home() {
       .carousel-label {
         font-size: 18px;
         padding: 15px;
-      }
-      
-      .gallery {
-        grid-template-columns: 1fr;
-        gap: 20px;
       }
       
       .pricing {
@@ -633,9 +626,9 @@ export default function Home() {
 
       <div className="wrapper">
         {/* NAV */}
-        <nav className="nav">
+        <nav className="nav" role="navigation" aria-label="Navigation principale">
           <div className="nav-content">
-            <button className="logo" onClick={() => setCurrentPage('home')}>
+            <button className="logo" onClick={() => setCurrentPage('home')} aria-label="Accueil">
               JuDev
             </button>
             <div className="nav-links">
@@ -644,6 +637,7 @@ export default function Home() {
                   key={item.id}
                   className={`nav-link ${currentPage === item.id ? 'active' : ''}`}
                   onClick={() => setCurrentPage(item.id)}
+                  aria-current={currentPage === item.id ? 'page' : undefined}
                 >
                   {item.label}
                 </button>
@@ -651,6 +645,7 @@ export default function Home() {
               <button 
                 className="theme-toggle"
                 onClick={() => setIsDarkMode(!isDarkMode)}
+                aria-label={isDarkMode ? 'Passer au mode clair' : 'Passer au mode sombre'}
                 title={isDarkMode ? 'Mode clair' : 'Mode sombre'}
               >
                 {isDarkMode ? '☀️' : '🌙'}
@@ -695,13 +690,13 @@ export default function Home() {
                   <div className="carousel-box">
                     <img
                       src={carouselImages[carouselIndex]}
-                      alt="Carousel"
+                      alt={`Projet exemple ${carouselIndex + 1}`}
                       className="carousel-image"
                     />
-                    <button className="carousel-arrow prev" onClick={prevSlide}>
+                    <button className="carousel-arrow prev" onClick={prevSlide} aria-label="Image précédente">
                       ‹
                     </button>
-                    <button className="carousel-arrow next" onClick={nextSlide}>
+                    <button className="carousel-arrow next" onClick={nextSlide} aria-label="Image suivante">
                       ›
                     </button>
                   </div>
@@ -714,38 +709,13 @@ export default function Home() {
           </motion.div>
         )}
 
-        {/* PORTFOLIO */}
-        {currentPage === 'portfolio' && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-            <div className="container">
-              <div className="section">
-                <motion.h2 variants={itemVariants} initial="hidden" animate="visible">
-                  Nos Projets
-                </motion.h2>
-                <motion.div
-                  className="gallery"
-                  variants={containerVariants}
-                  initial="hidden"
-                  animate="visible"
-                >
-                  {['E-commerce Premium', 'Application SaaS', 'Portfolio Designer', 'Site Institutionnel', 'Plateforme Éducative', 'Application Mobile Web'].map((label, i) => (
-                    <motion.div key={i} className="gallery-item" variants={itemVariants}>
-                      {label}
-                    </motion.div>
-                  ))}
-                </motion.div>
-              </div>
-            </div>
-          </motion.div>
-        )}
-
         {/* TARIFS */}
         {currentPage === 'tarifs' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <div className="container">
               <div className="section">
                 <motion.h2 variants={itemVariants} initial="hidden" animate="visible">
-                  Nos Offres
+                  Nos Offres de Création de Site Web
                 </motion.h2>
                 <motion.div
                   className="pricing"
@@ -754,71 +724,56 @@ export default function Home() {
                   animate="visible"
                 >
                   <motion.div className="price-card" variants={itemVariants}>
-                    <h3>Starter</h3>
+                    <h3>Offre Essentiel</h3>
                     <p className="price-desc">Pour débuter</p>
-                    <div className="price">1 990€</div>
+                    <div className="price">À partir de 200€</div>
                     <ul className="features-list">
-<section class="offers">
-  <h2>Nos Offres de Création de Site Web</h2>
-
-  <div class="pricing-container">
-
-    <!-- Offre Essentiel -->
-    <div class="pricing-card">
-      <h3>Offre Essentiel</h3>
-      <p class="price">À partir de 200€</p>
-      <ul>
-        <li>✓ Site vitrine 5 à 10 pages</li>
-        <li>✓ Design moderne & responsive</li>
-        <li>✓ SEO basique (optimisation Google)</li>
-        <li>✓ Formulaire de contact</li>
-        <li>✓ Intégration contenus</li>
-        <li>✓ Mise en ligne du site</li>
-        <li>✓ Support technique 1 mois</li>
-      </ul>
+                      <li>✓ Site vitrine 5 à 10 pages</li>
+                      <li>✓ Design moderne & responsive</li>
+                      <li>✓ SEO basique (optimisation Google)</li>
+                      <li>✓ Formulaire de contact</li>
+                      <li>✓ Intégration contenus</li>
+                      <li>✓ Mise en ligne du site</li>
+                      <li>✓ Support technique 1 mois</li>
+                    </ul>
                     <button className="btn" style={{ width: '100%' }} onClick={() => setCurrentPage('contact')}>
                       Choisir
                     </button>
                   </motion.div>
 
                   <motion.div className="price-card highlight" variants={itemVariants}>
-                    <h3>Professionnel</h3>
+                    <h3>Offre Professionnel</h3>
                     <p className="price-desc">⭐ Populaire</p>
-                    <div className="price">3 990€</div>
+                    <div className="price">À partir de 500€</div>
                     <ul className="features-list">
-                       <!-- Offre Pro -->
-    <div class="pricing-card featured">
-      <h3>Offre Professionnel</h3>
-      <p class="price">À partir de 500€</p>
-      <ul>
-        <li>✓ Site jusqu'à 15 pages</li>
-        <li>✓ Design sur-mesure</li>
-        <li>✓ Responsive tous supports</li>
-        <li>✓ SEO optimisé</li>
-        <li>✓ Optimisation vitesse</li>
-        <li>✓ Intégration réseaux sociaux</li>
-        <li>✓ Formation utilisation</li>
-        <li>✓ Support prioritaire 2 mois</li>
-      </ul>
+                      <li>✓ Site jusqu'à 15 pages</li>
+                      <li>✓ Design sur-mesure</li>
+                      <li>✓ Responsive tous supports</li>
+                      <li>✓ SEO optimisé</li>
+                      <li>✓ Optimisation vitesse</li>
+                      <li>✓ Intégration réseaux sociaux</li>
+                      <li>✓ Formation utilisation</li>
+                      <li>✓ Support prioritaire 2 mois</li>
+                    </ul>
                     <button className="btn" style={{ width: '100%' }} onClick={() => setCurrentPage('contact')}>
                       Choisir
                     </button>
                   </motion.div>
 
                   <motion.div className="price-card" variants={itemVariants}>
-                    <h3>Entreprise</h3>
+                    <h3>Offre Entreprise</h3>
                     <p className="price-desc">Projets complexes</p>
                     <div className="price">Devis</div>
                     <ul className="features-list">
-                            <li>✓ Site web sur mesure</li>
-        <li>✓ UX/UI design professionnel</li>
-        <li>✓ SEO avancé</li>
-        <li>✓ Sécurité renforcée</li>
-        <li>✓ Statistiques visiteurs</li>
-        <li>✓ Maintenance incluse</li>
-        <li>✓ Accompagnement stratégique</li>
-        <li>✓ Support 3 mois</li>
-      </ul>
+                      <li>✓ Site web sur mesure</li>
+                      <li>✓ UX/UI design professionnel</li>
+                      <li>✓ SEO avancé</li>
+                      <li>✓ Sécurité renforcée</li>
+                      <li>✓ Statistiques visiteurs</li>
+                      <li>✓ Maintenance incluse</li>
+                      <li>✓ Accompagnement stratégique</li>
+                      <li>✓ Support 3 mois</li>
+                    </ul>
                     <button className="btn" style={{ width: '100%' }} onClick={() => setCurrentPage('contact')}>
                       Discuter
                     </button>
@@ -847,6 +802,7 @@ export default function Home() {
                     href="mailto:contact@judev.store"
                     className="contact-card"
                     variants={itemVariants}
+                    aria-label="Envoyer un email"
                   >
                     <div className="contact-icon">📧</div>
                     <div className="contact-label">Email</div>
@@ -857,6 +813,7 @@ export default function Home() {
                     href="tel:+33612345678"
                     className="contact-card"
                     variants={itemVariants}
+                    aria-label="Appeler par téléphone"
                   >
                     <div className="contact-icon">📱</div>
                     <div className="contact-label">Téléphone</div>
@@ -868,7 +825,7 @@ export default function Home() {
           </motion.div>
         )}
 
-        <footer>
+        <footer role="contentinfo">
           <div className="container">
             <p>© 2026 JuDev — Design créatif et innovant ✨</p>
           </div>
