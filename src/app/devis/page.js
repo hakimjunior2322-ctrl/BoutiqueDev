@@ -1,4 +1,4 @@
-cat > /mnt/user-data/outputs/DevisPage_FIXED.jsx << 'ENDOFFILE'
+
 'use client'
 import { useState } from 'react'
 
@@ -148,5 +148,3 @@ export default function DevisPage() {
     </div>
   )
 }
-ENDOFFILE
-cat /mnt/user-data/outputs/DevisPage_FIXED.jsx
