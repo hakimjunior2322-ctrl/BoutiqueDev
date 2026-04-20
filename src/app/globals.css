@@ -2,58 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
-* { 
-  margin: 0; 
-  padding: 0; 
-  box-sizing: border-box; 
-}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-html { 
-  scroll-behavior: smooth;
-  overflow-y: auto;
-}
+html { scroll-behavior: smooth; }
 
-body { 
-  background: #000; 
-  color: #fff; 
-  font-family: 'Space Grotesk', 'Inter', sans-serif; 
+body {
+  background: #000;
+  color: #fff;
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
   overflow-x: hidden;
-  overflow-y: auto;
-  min-height: 100vh;
-  position: relative;
-  -webkit-user-select: text;
-  user-select: text;
-  touch-action: manipulation;
 }
 
-input, textarea, select {
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #000; }
+::-webkit-scrollbar-thumb { background: #3dd9ff; border-radius: 4px; }
+
+::selection { background: rgba(52, 221, 255, 0.3); }
+
+/* ✅ FIX SAFARI iOS — empêche le zoom + clavier qui disparaît */
+input,
+textarea,
+select {
   font-size: 16px !important;
-  -webkit-appearance: none;
-  -webkit-border-radius: 0;
-}
-
-input:focus, textarea:focus {
-  font-size: 16px !important;
-  outline: none;
-}
-
-::-webkit-scrollbar { 
-  width: 8px; 
-}
-
-::-webkit-scrollbar-track { 
-  background: #000; 
-}
-
-::-webkit-scrollbar-thumb { 
-  background: #3dd9ff; 
-  border-radius: 4px; 
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #7c3aed;
-}
-
-::selection { 
-  background: rgba(52, 221, 255, 0.3); 
 }
