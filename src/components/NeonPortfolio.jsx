@@ -14,7 +14,15 @@ export default function NeonPortfolio() {
     { id: 1, sender: 'bot', text: 'Bonjour! 👋 Comment puis-je t\'aider ?' }
   ])
   const [chatInput, setChatInput] = useState('')
-  const [bookingDate, setBookingDate] = useState('')
+
+  // CONTACT FORM
+  const [contactForm, setContactForm] = useState({
+    name: '',
+    email: '',
+    message: ''
+  })
+  const [contactSubmitting, setContactSubmitting] = useState(false)
+  const [contactSuccess, setContactSuccess] = useState('')
 
   // DONNÉES DEPUIS BDD
   const [boutiques, setBoutiques] = useState([])
@@ -105,6 +113,39 @@ export default function NeonPortfolio() {
     }, 500)
   }
 
+  const handleContactSubmit = async (e) => {
+    e.preventDefault()
+    setContactSubmitting(true)
+    
+    try {
+      const res = await fetch('/api/devis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: contactForm.name,
+          email: contactForm.email,
+          phone: '',
+          company: '',
+          budget: 0,
+          project_type: 'consultation',
+          message: contactForm.message,
+          status: 'new'
+        })
+      })
+
+      if (res.ok) {
+        setContactSuccess('✓ Message reçu ! Nous vous répondrons dans les 24-48h.')
+        setContactForm({ name: '', email: '', message: '' })
+        setTimeout(() => setContactSuccess(''), 5000)
+      }
+    } catch (error) {
+      console.error('Error:', error)
+      setContactSuccess('❌ Erreur lors de l\'envoi')
+    } finally {
+      setContactSubmitting(false)
+    }
+  }
+
   if (showSplash) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-gradient-to-br from-gray-950 via-purple-950 to-gray-950 overflow-hidden">
@@ -139,7 +180,7 @@ export default function NeonPortfolio() {
             ))}
           </div>
           <div className="lg:hidden flex gap-1 overflow-x-auto">
-            {navItems.slice(0, 3).map((item) => (
+            {navItems.slice(0, 4).map((item) => (
               <button key={item.id} onClick={() => setCurrentPage(item.id)} className={`px-2 py-1 text-xs font-semibold rounded transition-all flex-shrink-0 ${currentPage === item.id ? 'bg-pink-500/30 text-pink-300' : 'text-gray-400'}`}>
                 {item.label.split(' ')[0]}
               </button>
@@ -363,23 +404,28 @@ export default function NeonPortfolio() {
           </motion.div>
         )}
         <div className="bg-gradient-to-br from-pink-950/20 to-purple-950/20 border border-pink-500/20 rounded-xl p-6 md:p-12">
-          <form className="space-y-6">
+          {contactSuccess && (
+            <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="mb-6 p-4 bg-green-500/20 border border-green-500 text-green-400 rounded-lg text-center font-semibold">
+              {contactSuccess}
+            </motion.div>
+          )}
+          <form onSubmit={handleContactSubmit} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-white font-semibold mb-2">Nom</label>
-                <input type="text" placeholder="Ton nom" className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-pink-500 transition" />
+                <input type="text" placeholder="Ton nom" value={contactForm.name} onChange={(e) => setContactForm({...contactForm, name: e.target.value})} className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-pink-500 transition" required />
               </div>
               <div>
                 <label className="block text-white font-semibold mb-2">Email</label>
-                <input type="email" placeholder="tonemail@example.com" className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-pink-500 transition" />
+                <input type="email" placeholder="tonemail@example.com" value={contactForm.email} onChange={(e) => setContactForm({...contactForm, email: e.target.value})} className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-pink-500 transition" required />
               </div>
             </div>
             <div>
               <label className="block text-white font-semibold mb-2">Message</label>
-              <textarea placeholder="Décris ton projet en détail..." rows="6" className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-pink-500 transition resize-none" />
+              <textarea placeholder="Décris ton projet en détail..." rows="6" value={contactForm.message} onChange={(e) => setContactForm({...contactForm, message: e.target.value})} className="w-full bg-black/50 border border-pink-500/30 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-pink-500 transition resize-none" required />
             </div>
-            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} type="submit" className="w-full py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg font-semibold hover:from-pink-600 hover:to-purple-600 transition">
-              Envoyer mon message
+            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} type="submit" disabled={contactSubmitting} className="w-full py-3 bg-gradient-to-r from-pink-500 to-purple-500 text-white rounded-lg font-semibold hover:from-pink-600 hover:to-purple-600 transition disabled:opacity-50">
+              {contactSubmitting ? 'Envoi...' : 'Envoyer mon message'}
             </motion.button>
           </form>
         </div>
