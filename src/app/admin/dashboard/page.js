@@ -170,6 +170,7 @@ export default function DashboardPage() {
     avis: 0,
     devis: 0,
     tarifs: 0,
+    chat: 0,
   })
   const [loading, setLoading] = useState(true)
 
@@ -190,18 +191,23 @@ export default function DashboardPage() {
 
   const fetchStats = async () => {
     try {
-      const [boutiques, avis, devis, tarifs] = await Promise.all([
+      const [boutiques, avis, devis, tarifs, chat] = await Promise.all([
         fetch('/api/boutiques').then(r => r.json()),
         fetch('/api/avis').then(r => r.json()),
         fetch('/api/devis').then(r => r.json()),
         fetch('/api/tarifs').then(r => r.json()),
+        fetch('/api/chat').then(r => r.json()).catch(() => ({ data: [] })),
       ])
+
+      // Compter les sessions uniques du chat
+      const chatSessions = chat.data ? [...new Set(chat.data.map(m => m.session_id))] : []
 
       setStats({
         boutiques: boutiques.data?.length || 0,
         avis: avis.data?.length || 0,
         devis: devis.data?.length || 0,
         tarifs: tarifs.data?.length || 0,
+        chat: chatSessions.length,
       })
     } catch (error) {
       console.error('Error fetching stats:', error)
@@ -220,6 +226,7 @@ export default function DashboardPage() {
     { label: 'Avis', href: '/admin/avis', icon: '⭐', key: 'avis' },
     { label: 'Tarifs', href: '/admin/tarifs', icon: '💰', key: 'tarifs' },
     { label: 'Devis', href: '/admin/devis', icon: '📋', key: 'devis' },
+    { label: 'Chat', href: '/admin/chat', icon: '💬', key: 'chat' },
   ]
 
   const pageVariants = {
@@ -283,7 +290,7 @@ export default function DashboardPage() {
             </div>
           ) : (
             <>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-12">
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-6 mb-12">
                 {menuItems.map((item, i) => (
                   <motion.div
                     key={item.key}
@@ -318,7 +325,7 @@ export default function DashboardPage() {
               </div>
 
               {/* MENU BUTTONS - RESPONSIVE */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 {menuItems.map((item, i) => (
                   <motion.button
                     key={item.key}
