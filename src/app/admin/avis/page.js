@@ -68,6 +68,14 @@ export default function AvisPage() {
 
   return (
     <div className="min-h-screen bg-black">
+      {/* ← BOUTON RETOUR */}
+      <button
+        onClick={() => router.back()}
+        className="fixed top-6 left-6 z-50 px-4 py-2 bg-cyan-400/20 border border-cyan-400 text-cyan-400 rounded-lg hover:bg-cyan-400/30 transition"
+      >
+        ← Retour
+      </button>
+
       {/* Header */}
       <div className="bg-black border-b border-pink-500/20 sticky top-0 z-10">
         <div className="max-w-7xl mx-auto px-6 py-4">
