@@ -758,11 +758,24 @@ export default function Home() {
                     <p className="price-desc">Pour débuter</p>
                     <div className="price">1 990€</div>
                     <ul className="features-list">
-                      <li>✓ Site 5-10 pages</li>
-                      <li>✓ Design responsive</li>
-                      <li>✓ SEO basique</li>
-                      <li>✓ Support 1 mois</li>
-                    </ul>
+<section class="offers">
+  <h2>Nos Offres de Création de Site Web</h2>
+
+  <div class="pricing-container">
+
+    <!-- Offre Essentiel -->
+    <div class="pricing-card">
+      <h3>Offre Essentiel</h3>
+      <p class="price">À partir de 200€</p>
+      <ul>
+        <li>✓ Site vitrine 5 à 10 pages</li>
+        <li>✓ Design moderne & responsive</li>
+        <li>✓ SEO basique (optimisation Google)</li>
+        <li>✓ Formulaire de contact</li>
+        <li>✓ Intégration contenus</li>
+        <li>✓ Mise en ligne du site</li>
+        <li>✓ Support technique 1 mois</li>
+      </ul>
                     <button className="btn" style={{ width: '100%' }} onClick={() => setCurrentPage('contact')}>
                       Choisir
                     </button>
@@ -773,11 +786,20 @@ export default function Home() {
                     <p className="price-desc">⭐ Populaire</p>
                     <div className="price">3 990€</div>
                     <ul className="features-list">
-                      <li>✓ Site 15-20 pages</li>
-                      <li>✓ E-commerce basique</li>
-                      <li>✓ SEO avancé</li>
-                      <li>✓ Support 3 mois</li>
-                    </ul>
+                       <!-- Offre Pro -->
+    <div class="pricing-card featured">
+      <h3>Offre Professionnel</h3>
+      <p class="price">À partir de 500€</p>
+      <ul>
+        <li>✓ Site jusqu'à 15 pages</li>
+        <li>✓ Design sur-mesure</li>
+        <li>✓ Responsive tous supports</li>
+        <li>✓ SEO optimisé</li>
+        <li>✓ Optimisation vitesse</li>
+        <li>✓ Intégration réseaux sociaux</li>
+        <li>✓ Formation utilisation</li>
+        <li>✓ Support prioritaire 2 mois</li>
+      </ul>
                     <button className="btn" style={{ width: '100%' }} onClick={() => setCurrentPage('contact')}>
                       Choisir
                     </button>
@@ -788,11 +810,15 @@ export default function Home() {
                     <p className="price-desc">Projets complexes</p>
                     <div className="price">Devis</div>
                     <ul className="features-list">
-                      <li>✓ Tout ce que vous voulez</li>
-                      <li>✓ E-commerce complet</li>
-                      <li>✓ Application web</li>
-                      <li>✓ Support illimité</li>
-                    </ul>
+                            <li>✓ Site web sur mesure</li>
+        <li>✓ UX/UI design professionnel</li>
+        <li>✓ SEO avancé</li>
+        <li>✓ Sécurité renforcée</li>
+        <li>✓ Statistiques visiteurs</li>
+        <li>✓ Maintenance incluse</li>
+        <li>✓ Accompagnement stratégique</li>
+        <li>✓ Support 3 mois</li>
+      </ul>
                     <button className="btn" style={{ width: '100%' }} onClick={() => setCurrentPage('contact')}>
                       Discuter
                     </button>
