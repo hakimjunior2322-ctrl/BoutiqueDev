@@ -347,11 +347,11 @@ export default function JuDevCyber() {
   }
 
   const navItems = [
-    { id: 'home', label: 'Accueil' },
-    { id: 'judev', label: 'Nos Clients' },
-    { id: 'avis', label: 'Avis' },
-    { id: 'tarifs', label: 'Tarifs' },
-    { id: 'contact', label: 'Contact' },
+    { id: 'home', label: 'Accueil', shortLabel: 'Home' },
+    { id: 'judev', label: 'Nos Clients', shortLabel: 'Clients' },
+    { id: 'avis', label: 'Avis', shortLabel: 'Avis' },
+    { id: 'tarifs', label: 'Tarifs', shortLabel: 'Tarifs' },
+    { id: 'contact', label: 'Contact', shortLabel: 'Contact' },
   ]
 
   const pageVariants = {
@@ -390,18 +390,20 @@ export default function JuDevCyber() {
       <nav className="fixed top-0 left-0 right-0 z-40" style={{ background: 'rgba(2,5,10,0.85)', backdropFilter: 'blur(20px)', borderBottom: '1px solid rgba(0,255,65,0.12)' }}>
         <div className="max-w-7xl mx-auto px-4 md:px-6 h-16 md:h-20 flex items-center justify-between">
           <button onClick={() => setCurrentPage('home')} className="font-bebas text-2xl font-black" style={{ color: 'var(--green)', textShadow: '0 0 20px rgba(0,255,65,0.5)', letterSpacing: '2px', background: 'none', border: 'none', cursor: 'none' }}>JuDev</button>
-          <div className="flex items-center gap-1 md:gap-4">
+          <div className="flex items-center gap-1 md:gap-3 lg:gap-4 flex-wrap justify-end">
+            {/* DESKTOP - Texte complet */}
             <div className="hidden lg:flex gap-1">
               {navItems.map((item) => (
-                <motion.button key={item.id} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => setCurrentPage(item.id)} className="font-mono px-3 md:px-4 py-2 text-xs md:text-sm font-semibold rounded-lg transition-all" style={{ background: currentPage === item.id ? 'rgba(0,255,65,0.15)' : 'transparent', color: currentPage === item.id ? 'var(--green)' : 'rgba(232,232,234,0.35)', textShadow: currentPage === item.id ? '0 0 10px rgba(0,255,65,0.5)' : 'none' }}>
+                <motion.button key={item.id} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => setCurrentPage(item.id)} className="font-mono px-3 md:px-4 py-2 text-xs md:text-sm font-semibold rounded-lg transition-all whitespace-nowrap" style={{ background: currentPage === item.id ? 'rgba(0,255,65,0.15)' : 'transparent', color: currentPage === item.id ? 'var(--green)' : 'rgba(232,232,234,0.35)', textShadow: currentPage === item.id ? '0 0 10px rgba(0,255,65,0.5)' : 'none' }}>
                   {item.label}
                 </motion.button>
               ))}
             </div>
-            <div className="lg:hidden flex gap-1">
+            {/* MOBILE & TABLET - Texte court */}
+            <div className="lg:hidden flex gap-1 flex-wrap justify-end">
               {navItems.map((item) => (
-                <motion.button key={item.id} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => setCurrentPage(item.id)} className="font-mono px-2 py-1 text-xs font-semibold rounded transition-all" style={{ background: currentPage === item.id ? 'rgba(0,255,65,0.15)' : 'transparent', color: currentPage === item.id ? 'var(--green)' : 'rgba(232,232,234,0.35)' }}>
-                  {item.label.split(' ')[0]}
+                <motion.button key={item.id} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => setCurrentPage(item.id)} className="font-mono px-2.5 md:px-3 py-1.5 text-xs font-semibold rounded transition-all whitespace-nowrap" style={{ background: currentPage === item.id ? 'rgba(0,255,65,0.15)' : 'transparent', color: currentPage === item.id ? 'var(--green)' : 'rgba(232,232,234,0.35)' }}>
+                  {item.shortLabel}
                 </motion.button>
               ))}
             </div>
