@@ -452,48 +452,206 @@ const STYLES = `
   
   @media (max-width: 768px) {
     .nav {
-      padding: 12px 20px;
+      padding: 12px 16px;
     }
     
     .nav-links {
-      gap: 20px;
+      gap: 15px;
     }
     
     .nav-link {
-      font-size: 12px;
+      font-size: 11px;
     }
     
     .hero {
       padding-top: 70px;
       padding-bottom: 40px;
+      min-height: auto;
+    }
+    
+    .container {
+      padding: 0 16px;
     }
     
     .button-group {
       gap: 10px;
+      flex-direction: column;
     }
     
     .btn {
-      padding: 11px 22px;
+      padding: 12px 20px;
       font-size: 12px;
+      width: 100%;
     }
     
     .swiper-carousel {
-      height: 250px;
+      height: 200px;
     }
     
     .gallery {
       grid-template-columns: 1fr;
+      gap: 20px;
     }
     
     .pricing {
       grid-template-columns: 1fr;
+      gap: 20px;
     }
     
     .price-card.highlight {
       transform: scale(1);
     }
+    
+    .section {
+      padding: 50px 0;
+    }
+    
+    .section h2 {
+      margin-bottom: 30px;
+      font-size: 32px;
+    }
+    
+    .hero-label {
+      font-size: 14px;
+    }
+    
+    .hero-content h1 {
+      font-size: 32px;
+      margin-bottom: 15px;
+    }
+    
+    .hero-desc {
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+    
+    .swiper-button-next,
+    .swiper-button-prev {
+      width: 40px;
+      height: 40px;
+    }
+    
+    .swiper-button-next:after,
+    .swiper-button-prev:after {
+      font-size: 14px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .nav {
+      padding: 10px 12px;
+    }
+    
+    .logo {
+      font-size: 18px;
+    }
+    
+    .nav-links {
+      gap: 10px;
+    }
+    
+    .nav-link {
+      font-size: 10px;
+    }
+    
+    .container {
+      padding: 0 12px;
+    }
+    
+    .hero-content h1 {
+      font-size: 24px;
+      margin-bottom: 12px;
+    }
+    
+    .hero-label {
+      font-size: 12px;
+    }
+    
+    .hero-desc {
+      font-size: 13px;
+      margin-bottom: 20px;
+    }
+    
+    .section h2 {
+      font-size: 26px;
+      margin-bottom: 20px;
+    }
+    
+    .btn {
+      padding: 11px 16px;
+      font-size: 11px;
+    }
+    
+    .swiper-carousel {
+      height: 160px;
+      border-radius: 12px;
+    }
+    
+    .boutique-name {
+      font-size: 16px;
+    }
+    
+    .swiper-button-next,
+    .swiper-button-prev {
+      width: 35px;
+      height: 35px;
+      display: none;
+    }
+    
+    .price-card {
+      padding: 25px 20px;
+    }
+    
+    .price {
+      font-size: 32px;
+    }
+    
+    .features-list {
+      font-size: 12px;
+      line-height: 2;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+      padding: 12px 14px;
+      font-size: 14px;
+    }
   }
 `
+
+// Images de placeholder robustes qui fonctionnent bien
+const boutiques = [
+  {
+    id: 1,
+    nom: 'Boutique Paris',
+    image: 'https://imgur.com/a/T8rxjDp'
+  },
+  {
+    id: 2,
+    nom: 'Boutique Lyon',
+    image: 'https://images.pexels.com/photos/3807517/pexels-photo-3807517.jpeg?w=1000&h=800&fit=crop'
+  },
+  {
+    id: 3,
+    nom: 'Boutique Marseille',
+    image: 'https://images.pexels.com/photos/3962286/pexels-photo-3962286.jpeg?w=1000&h=800&fit=crop'
+  },
+  {
+    id: 4,
+    nom: 'Boutique Toulouse',
+    image: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?w=1000&h=800&fit=crop'
+  },
+  {
+    id: 5,
+    nom: 'Boutique Nice',
+    image: 'https://images.pexels.com/photos/3535171/pexels-photo-3535171.jpeg?w=1000&h=800&fit=crop'
+  },
+  {
+    id: 6,
+    nom: 'Boutique Bordeaux',
+    image: 'https://images.pexels.com/photos/3622622/pexels-photo-3622622.jpeg?w=1000&h=800&fit=crop'
+  }
+]
 
 export default function Home() {
   const [currentPage, setCurrentPage] = useState('home')
@@ -539,40 +697,6 @@ export default function Home() {
     { id: 'clients', label: 'Portfolio' },
     { id: 'tarifs', label: 'Tarifs' },
     { id: 'contact', label: 'Contact' }
-  ]
-
-  // DONNÉES DES BOUTIQUES - À MODIFIER AVEC TES BOUTIQUES
-  const boutiques = [
-    {
-      id: 1,
-      nom: 'Boutique Paris',
-      image: 'https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=1000&h=800&fit=crop'
-    },
-    {
-      id: 2,
-      nom: 'Boutique Lyon',
-      image: 'https://images.unsplash.com/photo-1496442226666-8d4d0e62e6e9?w=1000&h=800&fit=crop'
-    },
-    {
-      id: 3,
-      nom: 'Boutique Marseille',
-      image: 'https://images.unsplash.com/photo-1522869635100-ce306e08c5ec?w=1000&h=800&fit=crop'
-    },
-    {
-      id: 4,
-      nom: 'Boutique Toulouse',
-      image: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=1000&h=800&fit=crop'
-    },
-    {
-      id: 5,
-      nom: 'Boutique Nice',
-      image: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=1000&h=800&fit=crop'
-    },
-    {
-      id: 6,
-      nom: 'Boutique Bordeaux',
-      image: 'https://images.unsplash.com/photo-1570129477492-45acc003a6bb?w=1000&h=800&fit=crop'
-    }
   ]
 
   const containerVariants = {
@@ -672,6 +796,7 @@ export default function Home() {
                             src={boutique.image} 
                             alt={boutique.nom}
                             className="slide-image"
+                            loading="lazy"
                           />
                         </SwiperSlide>
                       ))}
