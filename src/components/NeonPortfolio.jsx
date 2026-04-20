@@ -287,7 +287,7 @@ export default function JuDevCyber() {
   }, [])
 
   useEffect(() => {
-    fetch('/api/avis?status=approved').then(r => r.json()).then(d => setAvis((d.data || []).map(a => ({ id: a.id, name: a.name, role: a.business || 'Client', text: a.text, rating: a.rating || 5, avatar: ['👩‍💼', '👨‍💼', '👩‍🔬', '👨‍🎨'][Math.floor(Math.random() * 4)] })))).catch(e => console.error('Erreur avis:', e))
+    fetch('/api/avis?status=approved').then(r => r.json()).then(d => setAvis((d.data || []).map(a => ({ id: a.id, name: a.name, role: a.business || 'Client', text: a.text, rating: a.rating || 5, avatarInitial: a.name ? a.name.charAt(0).toUpperCase() : '?' })))).catch(e => console.error('Erreur avis:', e))
   }, [])
 
   useEffect(() => {
@@ -528,7 +528,20 @@ export default function JuDevCyber() {
               ) : avis.map((testimonial, i) => (
                 <motion.div key={testimonial.id} initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.08 }} as={TiltCard} className="p-6 md:p-8 rounded-lg" style={{ background: 'rgba(6,12,20,0.8)', border: '1px solid rgba(0,255,65,0.1)' }}>
                   <div className="flex items-start gap-4 mb-4">
-                    <div className="text-4xl">{testimonial.avatar}</div>
+                    <svg width="48" height="48" viewBox="0 0 48 48" style={{ flexShrink: 0 }}>
+                      <defs>
+                        <linearGradient id="avatarGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" style={{ stopColor: '#00ff41', stopOpacity: 0.25 }} />
+                          <stop offset="100%" style={{ stopColor: '#ffb347', stopOpacity: 0.25 }} />
+                        </linearGradient>
+                      </defs>
+                      {/* Fond */}
+                      <circle cx="24" cy="24" r="24" fill="url(#avatarGrad)" stroke="rgba(0,255,65,0.3)" strokeWidth="1" />
+                      {/* Tête silhouette */}
+                      <circle cx="24" cy="15" r="7" fill="rgba(0,255,65,0.5)" />
+                      {/* Corps silhouette */}
+                      <path d="M 16 26 Q 16 24 24 24 Q 32 24 32 26 L 32 34 Q 32 36 24 36 Q 16 36 16 34 Z" fill="rgba(0,255,65,0.4)" />
+                    </svg>
                     <div className="flex-1">
                       <h3 className="text-lg font-bold text-white font-mono">{testimonial.name}</h3>
                       <p className="text-sm" style={{ color: 'rgba(232,232,234,0.4)' }}>{testimonial.role}</p>
