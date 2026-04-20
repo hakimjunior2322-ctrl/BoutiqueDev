@@ -2,21 +2,13 @@
 
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Swiper, SwiperSlide } from 'swiper/react'
-import { Navigation, Pagination } from 'swiper/modules'
-import 'swiper/css'
-import 'swiper/css/navigation'
-import 'swiper/css/pagination'
 
 const STYLES = `
   @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
   
   * { margin: 0; padding: 0; box-sizing: border-box; }
   
-  html, body { 
-    width: 100%;
-    height: 100%;
-  }
+  html, body { width: 100%; height: 100%; }
   
   body { 
     font-family: 'Inter', sans-serif;
@@ -46,11 +38,11 @@ const STYLES = `
     top: 0;
     left: 0;
     right: 0;
-    background: rgba(10, 10, 10, 0.7);
+    background: rgba(10, 10, 10, 0.95);
     backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(100, 100, 100, 0.1);
     z-index: 50;
-    padding: 16px 30px;
+    padding: 16px 20px;
   }
   
   .nav-content {
@@ -62,19 +54,18 @@ const STYLES = `
   }
   
   .logo {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 800;
     cursor: pointer;
     color: #fff;
     border: none;
     background: none;
     font-family: 'Poppins', sans-serif;
-    letter-spacing: -1px;
   }
   
   .nav-links {
     display: flex;
-    gap: 35px;
+    gap: 30px;
     align-items: center;
   }
   
@@ -86,37 +77,16 @@ const STYLES = `
     background: none;
     color: #ccc;
     transition: all 0.3s;
-    position: relative;
-  }
-  
-  .nav-link.active {
-    color: #fff;
-    font-weight: 600;
   }
   
   .nav-link:hover {
-    color: #fff;
-  }
-  
-  .nav-link:after {
-    content: '';
-    position: absolute;
-    bottom: -5px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background: #ff6b9d;
-    transition: width 0.3s;
-  }
-  
-  .nav-link:hover:after {
-    width: 100%;
+    color: #ff6b9d;
   }
   
   .container {
-    max-width: 1400px;
+    max-width: 1200px;
     margin: 0 auto;
-    padding: 0 30px;
+    padding: 0 20px;
   }
   
   .hero {
@@ -124,7 +94,6 @@ const STYLES = `
     display: flex;
     align-items: center;
     padding-top: 80px;
-    position: relative;
   }
   
   .hero-grid {
@@ -132,17 +101,14 @@ const STYLES = `
     grid-template-columns: 1fr 1fr;
     gap: 60px;
     align-items: center;
-    position: relative;
-    z-index: 2;
   }
   
   .hero-content h1 {
-    font-size: clamp(36px, 7vw, 76px);
+    font-size: clamp(36px, 8vw, 72px);
     line-height: 1.1;
     margin-bottom: 20px;
     font-weight: 900;
-    color: #fff;
-    letter-spacing: -2px;
+    letter-spacing: -1px;
   }
   
   .hero-label {
@@ -153,34 +119,29 @@ const STYLES = `
   }
   
   .hero-desc {
-    font-size: clamp(14px, 3vw, 16px);
-    color: #fff;
+    font-size: 16px;
+    color: #ccc;
     line-height: 1.7;
     margin-bottom: 40px;
-    max-width: 500px;
   }
   
   .button-group {
     display: flex;
     gap: 15px;
-    flex-wrap: wrap;
   }
   
   .btn {
-    padding: 13px 30px;
+    padding: 12px 28px;
     border: 2px solid #ff6b9d;
     cursor: pointer;
     font-size: 13px;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 1px;
-    transition: all 0.4s ease;
-    font-family: 'Inter', sans-serif;
+    transition: all 0.3s;
     background: linear-gradient(135deg, #ff6b9d, #ff8fae);
     color: #fff;
     border-radius: 50px;
-    position: relative;
-    overflow: hidden;
   }
   
   .btn:hover {
@@ -190,7 +151,6 @@ const STYLES = `
   
   .btn-secondary {
     background: transparent;
-    border: 2px solid #ff6b9d;
     color: #ff6b9d;
   }
   
@@ -198,102 +158,91 @@ const STYLES = `
     background: rgba(255, 107, 157, 0.1);
   }
   
-  .boutiques-container {
+  .carousel-container {
     display: flex;
     flex-direction: column;
     gap: 20px;
   }
   
-  .swiper-carousel {
+  .carousel-box {
+    position: relative;
     width: 100%;
     height: 400px;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 107, 157, 0.1);
+    border-radius: 16px;
     overflow: hidden;
     background: rgba(50, 50, 60, 0.2);
-    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 107, 157, 0.1);
   }
   
-  .swiper {
-    width: 100%;
-    height: 100%;
-  }
-  
-  .swiper-slide {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-  }
-  
-  .slide-image {
+  .carousel-image {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    animation: fadeIn 0.5s ease;
   }
   
-  .boutique-name-container {
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+  
+  .carousel-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 107, 157, 0.2);
+    border: 2px solid #ff6b9d;
+    color: #ff6b9d;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    border-radius: 50%;
+    transition: all 0.3s;
+    z-index: 10;
+    user-select: none;
+  }
+  
+  .carousel-arrow:hover {
+    background: rgba(255, 107, 157, 0.4);
+    transform: translateY(-50%) scale(1.1);
+  }
+  
+  .carousel-arrow.prev {
+    left: 15px;
+  }
+  
+  .carousel-arrow.next {
+    right: 15px;
+  }
+  
+  .carousel-label {
     text-align: center;
     padding: 20px;
     background: rgba(10, 10, 10, 0.5);
-  }
-  
-  .boutique-name {
-    font-size: clamp(18px, 4vw, 28px);
+    font-size: 24px;
     font-weight: 700;
-    color: #fff;
-    font-family: 'Poppins', sans-serif;
-  }
-  
-  .swiper-button-next,
-  .swiper-button-prev {
-    color: #ff6b9d;
-    background: rgba(255, 107, 157, 0.15);
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    border: 2px solid rgba(255, 107, 157, 0.3);
-    transition: all 0.3s ease;
-  }
-  
-  .swiper-button-next:hover,
-  .swiper-button-prev:hover {
-    background: rgba(255, 107, 157, 0.3);
-    border-color: #ff6b9d;
-  }
-  
-  .swiper-button-next:after,
-  .swiper-button-prev:after {
-    font-size: 18px;
-    font-weight: bold;
-  }
-  
-  .swiper-pagination-bullet {
-    background: rgba(255, 107, 157, 0.4) !important;
-  }
-  
-  .swiper-pagination-bullet-active {
-    background: #ff6b9d !important;
+    border-radius: 8px;
   }
   
   .section {
-    padding: clamp(80px, 15vw, 140px) 0;
+    padding: 120px 0;
     position: relative;
-    min-height: auto;
   }
   
   .section h2 {
     font-size: clamp(36px, 7vw, 64px);
     margin-bottom: 50px;
-    color: #fff;
     font-weight: 900;
     letter-spacing: -1px;
   }
   
   .gallery {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 30px;
   }
   
@@ -302,7 +251,6 @@ const STYLES = `
     background: rgba(50, 50, 60, 0.2);
     border: 1px solid rgba(255, 107, 157, 0.15);
     cursor: pointer;
-    position: relative;
     overflow: hidden;
     border-radius: 16px;
     transition: all 0.5s ease;
@@ -322,17 +270,16 @@ const STYLES = `
   
   .pricing {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 30px;
   }
   
   .price-card {
     border: 1px solid rgba(255, 107, 157, 0.15);
-    padding: clamp(35px, 5vw, 50px);
+    padding: 40px 30px;
     background: rgba(50, 50, 60, 0.2);
     border-radius: 16px;
     transition: all 0.5s ease;
-    position: relative;
     backdrop-filter: blur(10px);
   }
   
@@ -349,9 +296,8 @@ const STYLES = `
   }
   
   .price-card h3 {
-    font-size: clamp(22px, 5vw, 28px);
+    font-size: 24px;
     margin-bottom: 10px;
-    color: #fff;
     font-weight: 700;
   }
   
@@ -359,19 +305,18 @@ const STYLES = `
     color: #ccc;
     font-size: 13px;
     margin-bottom: 20px;
-    font-weight: 400;
   }
   
   .price {
-    font-size: clamp(32px, 6vw, 48px);
+    font-size: 42px;
     font-weight: 900;
-    margin: 25px 0;
+    margin: 20px 0;
     color: #ff6b9d;
   }
   
   .features-list {
     text-align: left;
-    margin: 35px 0;
+    margin: 30px 0;
     font-size: 14px;
     line-height: 2.2;
     color: #ccc;
@@ -382,7 +327,7 @@ const STYLES = `
   }
   
   .contact-form {
-    max-width: 700px;
+    max-width: 600px;
   }
   
   .form-group {
@@ -402,7 +347,7 @@ const STYLES = `
   .form-group input,
   .form-group textarea {
     width: 100%;
-    padding: 14px 16px;
+    padding: 12px 15px;
     border: 1px solid rgba(255, 107, 157, 0.15);
     font-family: 'Inter', sans-serif;
     font-size: 15px;
@@ -410,16 +355,6 @@ const STYLES = `
     color: #fff;
     transition: all 0.3s;
     border-radius: 8px;
-  }
-  
-  .form-group input::placeholder,
-  .form-group textarea::placeholder {
-    color: #999;
-  }
-  
-  .form-group textarea {
-    resize: none;
-    min-height: 120px;
   }
   
   .form-group input:focus,
@@ -430,13 +365,17 @@ const STYLES = `
     box-shadow: 0 0 20px rgba(255, 107, 157, 0.15);
   }
   
+  .form-group textarea {
+    resize: none;
+    min-height: 120px;
+  }
+  
   footer {
     border-top: 1px solid rgba(255, 107, 157, 0.1);
-    padding: clamp(40px, 8vw, 60px) 0;
+    padding: 50px 0;
     text-align: center;
     font-size: 13px;
     color: #999;
-    font-weight: 400;
   }
   
   @media (max-width: 1024px) {
@@ -445,7 +384,7 @@ const STYLES = `
       gap: 40px;
     }
     
-    .swiper-carousel {
+    .carousel-box {
       height: 300px;
     }
   }
@@ -465,8 +404,6 @@ const STYLES = `
     
     .hero {
       padding-top: 70px;
-      padding-bottom: 40px;
-      min-height: auto;
     }
     
     .container {
@@ -474,18 +411,29 @@ const STYLES = `
     }
     
     .button-group {
-      gap: 10px;
       flex-direction: column;
+      gap: 10px;
     }
     
     .btn {
-      padding: 12px 20px;
-      font-size: 12px;
       width: 100%;
+      padding: 11px 20px;
+      font-size: 12px;
     }
     
-    .swiper-carousel {
-      height: 200px;
+    .carousel-box {
+      height: 220px;
+    }
+    
+    .carousel-arrow {
+      width: 40px;
+      height: 40px;
+      font-size: 18px;
+    }
+    
+    .carousel-label {
+      font-size: 18px;
+      padding: 15px;
     }
     
     .gallery {
@@ -503,37 +451,12 @@ const STYLES = `
     }
     
     .section {
-      padding: 50px 0;
+      padding: 60px 0;
     }
     
     .section h2 {
-      margin-bottom: 30px;
       font-size: 32px;
-    }
-    
-    .hero-label {
-      font-size: 14px;
-    }
-    
-    .hero-content h1 {
-      font-size: 32px;
-      margin-bottom: 15px;
-    }
-    
-    .hero-desc {
-      font-size: 14px;
       margin-bottom: 30px;
-    }
-    
-    .swiper-button-next,
-    .swiper-button-prev {
-      width: 40px;
-      height: 40px;
-    }
-    
-    .swiper-button-next:after,
-    .swiper-button-prev:after {
-      font-size: 14px;
     }
   }
   
@@ -554,107 +477,41 @@ const STYLES = `
       font-size: 10px;
     }
     
-    .container {
-      padding: 0 12px;
-    }
-    
     .hero-content h1 {
-      font-size: 24px;
-      margin-bottom: 12px;
+      font-size: 28px;
     }
     
     .hero-label {
-      font-size: 12px;
+      font-size: 13px;
     }
     
     .hero-desc {
-      font-size: 13px;
-      margin-bottom: 20px;
+      font-size: 14px;
+    }
+    
+    .carousel-box {
+      height: 180px;
+    }
+    
+    .carousel-arrow {
+      width: 35px;
+      height: 35px;
+      font-size: 16px;
+    }
+    
+    .carousel-label {
+      font-size: 16px;
     }
     
     .section h2 {
       font-size: 26px;
-      margin-bottom: 20px;
-    }
-    
-    .btn {
-      padding: 11px 16px;
-      font-size: 11px;
-    }
-    
-    .swiper-carousel {
-      height: 160px;
-      border-radius: 12px;
-    }
-    
-    .boutique-name {
-      font-size: 16px;
-    }
-    
-    .swiper-button-next,
-    .swiper-button-prev {
-      width: 35px;
-      height: 35px;
-      display: none;
-    }
-    
-    .price-card {
-      padding: 25px 20px;
-    }
-    
-    .price {
-      font-size: 32px;
-    }
-    
-    .features-list {
-      font-size: 12px;
-      line-height: 2;
-    }
-    
-    .form-group input,
-    .form-group textarea {
-      padding: 12px 14px;
-      font-size: 14px;
     }
   }
 `
 
-// Images de placeholder robustes qui fonctionnent bien
-const boutiques = [
-  {
-    id: 1,
-    nom: 'Boutique Paris',
-    image: 'https://imgur.com/a/T8rxjDp'
-  },
-  {
-    id: 2,
-    nom: 'Boutique Lyon',
-    image: 'https://images.pexels.com/photos/3807517/pexels-photo-3807517.jpeg?w=1000&h=800&fit=crop'
-  },
-  {
-    id: 3,
-    nom: 'Boutique Marseille',
-    image: 'https://images.pexels.com/photos/3962286/pexels-photo-3962286.jpeg?w=1000&h=800&fit=crop'
-  },
-  {
-    id: 4,
-    nom: 'Boutique Toulouse',
-    image: 'https://images.pexels.com/photos/3183150/pexels-photo-3183150.jpeg?w=1000&h=800&fit=crop'
-  },
-  {
-    id: 5,
-    nom: 'Boutique Nice',
-    image: 'https://images.pexels.com/photos/3535171/pexels-photo-3535171.jpeg?w=1000&h=800&fit=crop'
-  },
-  {
-    id: 6,
-    nom: 'Boutique Bordeaux',
-    image: 'https://images.pexels.com/photos/3622622/pexels-photo-3622622.jpeg?w=1000&h=800&fit=crop'
-  }
-]
-
 export default function Home() {
   const [currentPage, setCurrentPage] = useState('home')
+  const [carouselIndex, setCarouselIndex] = useState(0)
 
   useEffect(() => {
     const loadVanta = async () => {
@@ -688,16 +545,29 @@ export default function Home() {
         }
       }
     }
-
     loadVanta()
   }, [])
 
   const navItems = [
     { id: 'home', label: 'Accueil' },
-    { id: 'clients', label: 'Portfolio' },
+    { id: 'portfolio', label: 'Portfolio' },
     { id: 'tarifs', label: 'Tarifs' },
     { id: 'contact', label: 'Contact' }
   ]
+
+  const carouselImages = [
+    'https://images.pexels.com/photos/3761681/pexels-photo-3761681.jpeg?w=800&h=600&fit=crop',
+    'https://images.pexels.com/photos/3807517/pexels-photo-3807517.jpeg?w=800&h=600&fit=crop',
+    'https://images.pexels.com/photos/3962286/pexels-photo-3962286.jpeg?w=800&h=600&fit=crop'
+  ]
+
+  const nextSlide = () => {
+    setCarouselIndex((prev) => (prev + 1) % carouselImages.length)
+  }
+
+  const prevSlide = () => {
+    setCarouselIndex((prev) => (prev - 1 + carouselImages.length) % carouselImages.length)
+  }
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -723,7 +593,7 @@ export default function Home() {
     <>
       <style>{STYLES}</style>
       <div id="vanta-bg"></div>
-      
+
       <div className="wrapper">
         {/* NAV */}
         <nav className="nav">
@@ -767,7 +637,7 @@ export default function Home() {
                     Des sites web modernes et performants avec un design créatif. Nous transformons vos idées en expériences numériques inoubliables.
                   </motion.p>
                   <motion.div variants={itemVariants} className="button-group">
-                    <button className="btn" onClick={() => setCurrentPage('clients')}>
+                    <button className="btn" onClick={() => setCurrentPage('portfolio')}>
                       Voir nos projets
                     </button>
                     <button className="btn btn-secondary" onClick={() => setCurrentPage('contact')}>
@@ -776,48 +646,23 @@ export default function Home() {
                   </motion.div>
                 </div>
 
-                {/* CAROUSEL BOUTIQUES */}
-                <motion.div 
-                  className="boutiques-container"
-                  variants={itemVariants}
-                >
-                  <div className="swiper-carousel">
-                    <Swiper
-                      modules={[Navigation, Pagination]}
-                      navigation
-                      pagination={{ clickable: true }}
-                      loop={true}
-                      spaceBetween={0}
-                      slidesPerView={1}
-                    >
-                      {boutiques.map(boutique => (
-                        <SwiperSlide key={boutique.id}>
-                          <img 
-                            src={boutique.image} 
-                            alt={boutique.nom}
-                            className="slide-image"
-                            loading="lazy"
-                          />
-                        </SwiperSlide>
-                      ))}
-                    </Swiper>
+                {/* CAROUSEL */}
+                <motion.div className="carousel-container" variants={itemVariants}>
+                  <div className="carousel-box">
+                    <img
+                      src={carouselImages[carouselIndex]}
+                      alt="Carousel"
+                      className="carousel-image"
+                    />
+                    <button className="carousel-arrow prev" onClick={prevSlide}>
+                      ‹
+                    </button>
+                    <button className="carousel-arrow next" onClick={nextSlide}>
+                      ›
+                    </button>
                   </div>
-                  <div className="boutique-name-container">
-                    <Swiper
-                      modules={[Navigation, Pagination]}
-                      navigation={false}
-                      pagination={false}
-                      loop={true}
-                      spaceBetween={0}
-                      slidesPerView={1}
-                      onSlideChange={(swiper) => {}}
-                    >
-                      {boutiques.map(boutique => (
-                        <SwiperSlide key={boutique.id}>
-                          <div className="boutique-name">{boutique.nom}</div>
-                        </SwiperSlide>
-                      ))}
-                    </Swiper>
+                  <div className="carousel-label">
+                    Boutique Exemple {carouselIndex + 1}
                   </div>
                 </motion.div>
               </motion.div>
@@ -825,33 +670,22 @@ export default function Home() {
           </motion.div>
         )}
 
-        {/* CLIENTS */}
-        {currentPage === 'clients' && (
+        {/* PORTFOLIO */}
+        {currentPage === 'portfolio' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <div className="container">
               <div className="section">
                 <motion.h2 variants={itemVariants} initial="hidden" animate="visible">
                   Nos Projets
                 </motion.h2>
-                <motion.div 
+                <motion.div
                   className="gallery"
                   variants={containerVariants}
                   initial="hidden"
                   animate="visible"
                 >
-                  {[
-                    'E-commerce Premium',
-                    'Application SaaS',
-                    'Portfolio Designer',
-                    'Site Institutionnel',
-                    'Plateforme Éducative',
-                    'Application Mobile Web'
-                  ].map((label, i) => (
-                    <motion.div 
-                      key={i}
-                      className="gallery-item"
-                      variants={itemVariants}
-                    >
+                  {['E-commerce Premium', 'Application SaaS', 'Portfolio Designer', 'Site Institutionnel', 'Plateforme Éducative', 'Application Mobile Web'].map((label, i) => (
+                    <motion.div key={i} className="gallery-item" variants={itemVariants}>
                       {label}
                     </motion.div>
                   ))}
@@ -869,7 +703,7 @@ export default function Home() {
                 <motion.h2 variants={itemVariants} initial="hidden" animate="visible">
                   Nos Offres
                 </motion.h2>
-                <motion.div 
+                <motion.div
                   className="pricing"
                   variants={containerVariants}
                   initial="hidden"
@@ -885,7 +719,9 @@ export default function Home() {
                       <li>✓ SEO basique</li>
                       <li>✓ Support 1 mois</li>
                     </ul>
-                    <button className="btn" style={{ width: '100%' }} onClick={() => setCurrentPage('contact')}>Choisir</button>
+                    <button className="btn" style={{ width: '100%' }} onClick={() => setCurrentPage('contact')}>
+                      Choisir
+                    </button>
                   </motion.div>
 
                   <motion.div className="price-card highlight" variants={itemVariants}>
@@ -898,7 +734,9 @@ export default function Home() {
                       <li>✓ SEO avancé</li>
                       <li>✓ Support 3 mois</li>
                     </ul>
-                    <button className="btn" style={{ width: '100%' }} onClick={() => setCurrentPage('contact')}>Choisir</button>
+                    <button className="btn" style={{ width: '100%' }} onClick={() => setCurrentPage('contact')}>
+                      Choisir
+                    </button>
                   </motion.div>
 
                   <motion.div className="price-card" variants={itemVariants}>
@@ -911,7 +749,9 @@ export default function Home() {
                       <li>✓ Application web</li>
                       <li>✓ Support illimité</li>
                     </ul>
-                    <button className="btn" style={{ width: '100%' }} onClick={() => setCurrentPage('contact')}>Discuter</button>
+                    <button className="btn" style={{ width: '100%' }} onClick={() => setCurrentPage('contact')}>
+                      Discuter
+                    </button>
                   </motion.div>
                 </motion.div>
               </div>
@@ -927,7 +767,7 @@ export default function Home() {
                 <motion.h2 variants={itemVariants} initial="hidden" animate="visible">
                   Parlons de votre projet
                 </motion.h2>
-                <motion.form 
+                <motion.form
                   className="contact-form"
                   variants={containerVariants}
                   initial="hidden"
@@ -945,12 +785,7 @@ export default function Home() {
                     <label>Décrivez votre projet</label>
                     <textarea placeholder="Parlez-nous de votre vision..."></textarea>
                   </motion.div>
-                  <motion.button 
-                    type="submit" 
-                    className="btn" 
-                    style={{ width: '100%' }}
-                    variants={itemVariants}
-                  >
+                  <motion.button type="submit" className="btn" style={{ width: '100%' }} variants={itemVariants}>
                     Envoyer
                   </motion.button>
                 </motion.form>
