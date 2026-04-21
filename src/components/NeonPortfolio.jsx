@@ -313,7 +313,7 @@ export default function Home() {
     }
     
     .section {
-      padding: 120px 0;
+      padding: 180px 0 120px 0;
       position: relative;
     }
     
