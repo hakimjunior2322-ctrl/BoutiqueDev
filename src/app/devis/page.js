@@ -1,4 +1,4 @@
-'use client'
+use client'
 
 import React from 'react'
 
@@ -48,7 +48,6 @@ const STYLES = `
   
   .contact-content {
     text-align: center;
-    width: 100%;
   }
   
   .contact-content h1 {
@@ -67,81 +66,62 @@ const STYLES = `
     margin-left: auto;
     margin-right: auto;
   }
-
-  .form-container {
-    max-width: 500px;
+  
+  .contact-info-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 40px;
+    max-width: 800px;
     margin: 0 auto;
+  }
+  
+  .contact-card {
     background: rgba(50, 50, 60, 0.2);
     border: 1px solid rgba(255, 107, 157, 0.15);
     padding: 40px 30px;
     border-radius: 16px;
     backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
   }
-
-  .form-group {
-    margin-bottom: 20px;
-    text-align: left;
-  }
-
-  .form-group label {
-    display: block;
-    margin-bottom: 8px;
-    font-weight: bold;
-    font-size: 14px;
-    color: #fff;
-  }
-
-  .form-group input,
-  .form-group select {
-    width: 100%;
-    padding: 12px;
-    border-radius: 8px;
-    border: 1px solid #ff6b9d;
-    background: rgba(50, 50, 60, 0.5);
-    color: #fff;
-    font-size: 14px;
-    font-family: 'Inter', sans-serif;
-    transition: all 0.3s;
-  }
-
-  .form-group input:focus,
-  .form-group select:focus {
-    outline: none;
+  
+  .contact-card:hover {
     border-color: #ff6b9d;
-    box-shadow: 0 0 10px rgba(255, 107, 157, 0.3);
-    background: rgba(50, 50, 60, 0.8);
+    transform: translateY(-10px);
+    box-shadow: 0 20px 50px rgba(255, 107, 157, 0.2);
   }
-
-  .form-group input::placeholder {
-    color: #999;
+  
+  .contact-icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+    display: block;
   }
-
-  .btn {
-    width: 100%;
-    padding: 12px 28px;
-    border: 2px solid #ff6b9d;
-    cursor: pointer;
-    font-size: 13px;
-    font-weight: 700;
+  
+  .contact-label {
+    font-size: 12px;
+    font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 1px;
-    transition: all 0.3s;
-    background: linear-gradient(135deg, #ff6b9d, #ff8fae);
+    color: #ff6b9d;
+    margin-bottom: 10px;
+  }
+  
+  .contact-value {
+    font-size: 20px;
+    font-weight: 700;
     color: #fff;
-    border-radius: 50px;
-    margin-top: 10px;
+    word-break: break-word;
   }
-
-  .btn:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 15px 40px rgba(255, 107, 157, 0.3);
+  
+  .contact-value a {
+    color: #ff6b9d;
+    text-decoration: none;
+    transition: all 0.3s ease;
   }
-
-  .btn:focus {
-    outline: 2px solid #ff6b9d;
-    outline-offset: 2px;
+  
+  .contact-value a:hover {
+    text-decoration: underline;
   }
-
+  
   footer {
     border-top: 1px solid rgba(255, 107, 157, 0.1);
     padding: 30px 0;
@@ -164,19 +144,29 @@ const STYLES = `
       font-size: 14px;
       margin-bottom: 40px;
     }
-
-    .form-container {
+    
+    .contact-info-grid {
+      grid-template-columns: 1fr;
+      gap: 25px;
+    }
+    
+    .contact-card {
       padding: 30px 20px;
     }
-
-    .btn {
-      padding: 11px 20px;
-      font-size: 12px;
+    
+    .contact-icon {
+      font-size: 40px;
+      margin-bottom: 15px;
+    }
+    
+    .contact-value {
+      font-size: 16px;
     }
   }
 `
 
-export default function DevisPage() {
+export default function ContactPage() {
+  // Charger Vanta au mount
   React.useEffect(() => {
     const loadVanta = async () => {
       const three = document.createElement('script')
@@ -212,31 +202,6 @@ export default function DevisPage() {
     loadVanta()
   }, [])
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    const formData = new FormData(e.target)
-    const data = Object.fromEntries(formData)
-    
-    try {
-      const response = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(data)
-      })
-      
-      const result = await response.json()
-      
-      if (result.success) {
-        alert('Demande envoyée! Nous vous contacterons bientôt.')
-        e.target.reset()
-      } else {
-        alert('Erreur: ' + (result.error || 'Une erreur est survenue'))
-      }
-    } catch (error) {
-      alert('Erreur: ' + error.message)
-    }
-  }
-
   return (
     <>
       <style>{STYLES}</style>
@@ -246,44 +211,27 @@ export default function DevisPage() {
         <div className="contact-section">
           <div className="container">
             <div className="contact-content">
-              <h1>Demande de Devis</h1>
-              <p>Remplissez le formulaire ci-dessous et nous vous recontacterons rapidement</p>
+              <h1>Contactez-nous</h1>
+              <p>Nous sommes là pour répondre à vos questions et discuter de vos projets</p>
               
-              <div className="form-container">
-                <form onSubmit={handleSubmit}>
-                  <div className="form-group">
-                    <label>Nom</label>
-                    <input type="text" name="nom" required placeholder="Votre nom" />
+              <div className="contact-info-grid">
+                {/* EMAIL */}
+                <div className="contact-card">
+                  <span className="contact-icon">📧</span>
+                  <div className="contact-label">Email</div>
+                  <div className="contact-value">
+                    <a href="mailto:contact@judev.store">contact@judev.store</a>
                   </div>
-
-                  <div className="form-group">
-                    <label>Prénom</label>
-                    <input type="text" name="prenom" required placeholder="Votre prénom" />
+                </div>
+                
+                {/* TÉLÉPHONE */}
+                <div className="contact-card">
+                  <span className="contact-icon">📱</span>
+                  <div className="contact-label">Téléphone</div>
+                  <div className="contact-value">
+                    <a href="tel:+33612345678">+33 6 12 34 56 78</a>
                   </div>
-
-                  <div className="form-group">
-                    <label>Email</label>
-                    <input type="email" name="email" required placeholder="Votre email" />
-                  </div>
-
-                  <div className="form-group">
-                    <label>Téléphone</label>
-                    <input type="tel" name="telephone" required placeholder="+33 6 12 34 56 78" />
-                  </div>
-
-                  <div className="form-group">
-                    <label>Offre intéressée</label>
-                    <select name="offre" required>
-                      <option>Offre Essentiel (200€)</option>
-                      <option>Offre Professionnel (500€)</option>
-                      <option>Offre Entreprise (Devis)</option>
-                    </select>
-                  </div>
-
-                  <button type="submit" className="btn">
-                    Envoyer ma demande
-                  </button>
-                </form>
+                </div>
               </div>
             </div>
           </div>
