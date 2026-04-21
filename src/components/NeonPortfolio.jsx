@@ -772,7 +772,7 @@ export default function Home() {
                     const data = Object.fromEntries(formData)
                     
                     try {
-                      const response = await fetch('/send-email.php', {
+                      const response = await fetch('/api/contact', {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(data)
@@ -842,4 +842,3 @@ export default function Home() {
       </div>
     </>
   )
-}
