@@ -313,8 +313,12 @@ export default function Home() {
     }
     
     .section {
-      padding: 180px 0 120px 0;
+      padding: 120px 0 120px 0;
       position: relative;
+    }
+
+    .section-with-top-padding {
+      padding-top: 100px;
     }
     
     .section h2 {
@@ -322,6 +326,7 @@ export default function Home() {
       margin-bottom: 50px;
       font-weight: 900;
       letter-spacing: -1px;
+      scroll-margin-top: 100px;
     }
     
     .pricing {
@@ -488,7 +493,11 @@ export default function Home() {
       }
       
       .section {
-        padding: 60px 0;
+        padding: 80px 0 60px 0;
+      }
+
+      .section-with-top-padding {
+        padding-top: 80px;
       }
       
       .section h2 {
@@ -544,6 +553,14 @@ export default function Home() {
       
       .carousel-label {
         font-size: 16px;
+      }
+      
+      .section {
+        padding: 60px 0 40px 0;
+      }
+
+      .section-with-top-padding {
+        padding-top: 70px;
       }
       
       .section h2 {
@@ -686,7 +703,7 @@ export default function Home() {
         {currentPage === 'tarifs' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <div className="container">
-              <div className="section">
+              <div className="section section-with-top-padding">
                 <motion.h2 variants={itemVariants} initial="hidden" animate="visible">
                   Nos Offres de Création de Site Web
                 </motion.h2>
@@ -761,7 +778,7 @@ export default function Home() {
         {currentPage === 'contact' && (
           <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <div className="container">
-              <div className="section">
+              <div className="section section-with-top-padding">
                 <motion.h2 variants={itemVariants} initial="hidden" animate="visible">
                   Demande de Devis
                 </motion.h2>
