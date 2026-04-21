@@ -808,7 +808,7 @@ export default function Home() {
 
                   <motion.div className="form-group" variants={itemVariants}>
                     <label>Email</label>
-                    <input type="text" name="email" required placeholder="Votre email" />
+                    <input type="email" name="email" required placeholder="Votre email" />
                   </motion.div>
 
                   <motion.div className="form-group" variants={itemVariants}>
@@ -842,3 +842,4 @@ export default function Home() {
       </div>
     </>
   )
+}
